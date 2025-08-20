@@ -235,38 +235,42 @@ export function WorkoutLog() {
                   </Button>
                 </div>
 
-                {/* Sets */}
-                <div className="space-y-2">
-                  <div className="grid grid-cols-4 gap-2 text-sm font-medium text-muted-foreground">
+                {/* Sets - Mobile Optimized */}
+                <div className="space-y-3">
+                  <div className="grid grid-cols-4 gap-2 text-sm font-medium text-muted-foreground px-1">
                     <span>Set</span>
-                    <span>Peso (kg)</span>
-                    <span>Ripetizioni</span>
+                    <span>Kg</span>
+                    <span>Reps</span>
                     <span></span>
                   </div>
                   
                   {exercise.sets.map((set, setIndex) => (
                     <div key={set.id} className="grid grid-cols-4 gap-2 items-center">
-                      <span className="text-sm font-medium">{setIndex + 1}</span>
+                      <span className="text-sm font-medium text-center bg-muted/50 rounded-md py-2">{setIndex + 1}</span>
                       <Input
                         type="number"
+                        inputMode="decimal"
                         placeholder="0"
                         value={set.weight || ''}
                         onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
+                        className="text-center touch-manipulation"
                       />
                       <Input
                         type="number"
+                        inputMode="numeric"
                         placeholder="0"
                         value={set.reps || ''}
                         onChange={(e) => updateSet(exercise.id, set.id, 'reps', parseInt(e.target.value) || 0)}
+                        className="text-center touch-manipulation"
                       />
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => removeSet(exercise.id, set.id)}
                         disabled={exercise.sets.length === 1}
-                        className="text-destructive hover:text-destructive"
+                        className="text-destructive hover:text-destructive touch-manipulation min-h-[44px]"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}
@@ -275,7 +279,7 @@ export function WorkoutLog() {
                     variant="outline"
                     size="sm"
                     onClick={() => addSet(exercise.id)}
-                    className="w-full"
+                    className="w-full touch-manipulation min-h-[44px]"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Aggiungi Set
