@@ -105,10 +105,10 @@ export function RestTimer() {
             Timer Recupero
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center space-y-6">
+        <CardContent className="text-center space-y-4 pb-6">
           {/* Timer Display */}
-          <div className="relative">
-            <div className={`text-6xl md:text-8xl font-bold transition-colors ${
+          <div className="relative flex items-center justify-center py-4">
+            <div className={`text-4xl sm:text-5xl md:text-6xl font-bold transition-colors z-10 relative ${
               isFinished ? 'text-success' : 
               timeLeft <= 10 && isRunning ? 'text-warning' :
               'text-primary'
@@ -118,7 +118,7 @@ export function RestTimer() {
             
             {/* Progress Ring */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-48 h-48 md:w-64 md:h-64 transform -rotate-90" viewBox="0 0 100 100">
+              <svg className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 transform -rotate-90" viewBox="0 0 100 100">
                 <circle
                   cx="50"
                   cy="50"
@@ -142,13 +142,24 @@ export function RestTimer() {
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex justify-center gap-4">
+          {/* Status Message */}
+          {isFinished && (
+            <div className="text-success font-semibold text-lg animate-bounce px-4">
+              ⏰ Tempo scaduto! Pronto per la prossima serie?
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Controls - Separate card for better mobile accessibility */}
+      <Card className="gradient-card border-0 shadow-fitness">
+        <CardContent className="pt-6">
+          <div className="flex justify-center gap-3 flex-wrap">
             {!isRunning ? (
               <Button 
                 onClick={startTimer}
                 size="lg"
-                className="gradient-primary text-primary-foreground"
+                className="gradient-primary text-primary-foreground min-w-[120px] touch-manipulation"
               >
                 <Play className="h-5 w-5 mr-2" />
                 {timeLeft === seconds ? 'Start' : 'Riprendi'}
@@ -158,6 +169,7 @@ export function RestTimer() {
                 onClick={pauseTimer}
                 size="lg"
                 variant="outline"
+                className="min-w-[120px] touch-manipulation"
               >
                 <Pause className="h-5 w-5 mr-2" />
                 Pausa
@@ -168,18 +180,12 @@ export function RestTimer() {
               onClick={resetTimer}
               size="lg"
               variant="outline"
+              className="min-w-[120px] touch-manipulation"
             >
               <RotateCcw className="h-5 w-5 mr-2" />
               Reset
             </Button>
           </div>
-
-          {/* Status Message */}
-          {isFinished && (
-            <div className="text-success font-semibold text-xl animate-bounce">
-              ⏰ Tempo scaduto! Pronto per la prossima serie?
-            </div>
-          )}
         </CardContent>
       </Card>
 
