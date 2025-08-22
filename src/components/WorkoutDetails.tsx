@@ -1,21 +1,100 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock, Target, Weight, BarChart3 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Target, Weight, BarChart3, Trash2 } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { Workout } from "@/types/fitness";
+import { Workout, Set } from "@/types/fitness";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, BarChart, Bar } from 'recharts';
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { SetCard } from "@/components/SetCard";
+import { EditSetDialog } from "@/components/EditSetDialog";
+import { useToast } from "@/hooks/use-toast";
 
 export function WorkoutDetails() {
   const { workoutId } = useParams();
   const navigate = useNavigate();
-  const [workouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
+  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
+  const [editingSet, setEditingSet] = useState<Set | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { toast } = useToast();
   
   const workout = useMemo(() => 
     workouts.find(w => w.id === workoutId), 
     [workouts, workoutId]
   );
+
+  const handleEditSet = (setId: string) => {
+    const set = workout?.exercises
+      .flatMap(ex => ex.sets)
+      .find(s => s.id === setId);
+    
+    if (set) {
+      setEditingSet(set);
+      setIsEditDialogOpen(true);
+    }
+  };
+
+  const handleSaveSet = (setId: string, weight: number, reps: number) => {
+    const updatedWorkouts = workouts.map(w => {
+      if (w.id === workoutId) {
+        return {
+          ...w,
+          exercises: w.exercises.map(ex => ({
+            ...ex,
+            sets: ex.sets.map(s => 
+              s.id === setId ? { ...s, weight, reps } : s
+            )
+          }))
+        };
+      }
+      return w;
+    });
+
+    setWorkouts(updatedWorkouts);
+    toast({
+      title: "Serie modificata",
+      description: "La serie è stata aggiornata con successo.",
+    });
+  };
+
+  const handleDeleteSet = (setId: string) => {
+    const updatedWorkouts = workouts.map(w => {
+      if (w.id === workoutId) {
+        return {
+          ...w,
+          exercises: w.exercises.map(ex => ({
+            ...ex,
+            sets: ex.sets.filter(s => s.id !== setId)
+          })).filter(ex => ex.sets.length > 0) // Remove exercise if no sets left
+        };
+      }
+      return w;
+    });
+
+    setWorkouts(updatedWorkouts);
+    toast({
+      title: "Serie eliminata",
+      description: "La serie è stata eliminata con successo.",
+    });
+  };
+
+  const handleDeleteExercise = (exerciseId: string) => {
+    const updatedWorkouts = workouts.map(w => {
+      if (w.id === workoutId) {
+        return {
+          ...w,
+          exercises: w.exercises.filter(ex => ex.id !== exerciseId)
+        };
+      }
+      return w;
+    });
+
+    setWorkouts(updatedWorkouts);
+    toast({
+      title: "Esercizio eliminato",
+      description: "L'esercizio è stato eliminato con successo.",
+    });
+  };
 
   if (!workout) {
     return (
@@ -273,16 +352,13 @@ export function WorkoutDetails() {
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {exercise.sets.map((set, setIndex) => (
-                      <div key={set.id} className="p-3 bg-accent/20 rounded-lg">
-                        <div className="text-center">
-                          <p className="text-xs text-muted-foreground mb-1">Serie {setIndex + 1}</p>
-                          <p className="text-lg font-bold text-primary">{set.weight}kg</p>
-                          <p className="text-sm text-muted-foreground">x {set.reps}</p>
-                          <p className="text-xs text-accent-foreground">
-                            Vol: {set.weight * set.reps}kg
-                          </p>
-                        </div>
-                      </div>
+                      <SetCard
+                        key={set.id}
+                        set={set}
+                        setIndex={setIndex}
+                        onEdit={handleEditSet}
+                        onDelete={handleDeleteSet}
+                      />
                     ))}
                   </div>
 
@@ -291,6 +367,19 @@ export function WorkoutDetails() {
                       {exercise.notes}
                     </p>
                   )}
+
+                  {/* Delete Exercise Button */}
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteExercise(exercise.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Elimina Esercizio
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -311,6 +400,17 @@ export function WorkoutDetails() {
           </Card>
         )}
       </div>
+
+      {/* Edit Set Dialog */}
+      <EditSetDialog
+        set={editingSet}
+        isOpen={isEditDialogOpen}
+        onClose={() => {
+          setIsEditDialogOpen(false);
+          setEditingSet(null);
+        }}
+        onSave={handleSaveSet}
+      />
     </div>
   );
 }
