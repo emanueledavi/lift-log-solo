@@ -39,9 +39,11 @@ export function Dashboard() {
     .slice(-10)
     .map(workout => ({
       date: new Date(workout.date).toLocaleDateString('it-IT', { month: 'short', day: 'numeric' }),
-      volume: workout.exercises.reduce((total, exercise) => 
-        total + exercise.sets.reduce((setTotal, set) => setTotal + (set.weight * set.reps), 0)
-      , 0)
+      volume: workout.exercises
+        .filter(exercise => exercise.type === 'strength')
+        .reduce((total, exercise) => 
+          total + exercise.sets.reduce((setTotal, set) => setTotal + ((set.weight || 0) * (set.reps || 0)), 0)
+        , 0)
     }));
 
   return (

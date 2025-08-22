@@ -16,9 +16,11 @@ export function WorkoutHistoryCard({ workout, onDelete }: WorkoutHistoryCardProp
   const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
 
-  const workoutVolume = workout.exercises.reduce((total, exercise) => 
-    total + exercise.sets.reduce((setTotal, set) => setTotal + (set.weight * set.reps), 0), 0
-  );
+  const workoutVolume = workout.exercises
+    .filter(exercise => exercise.type === 'strength')
+    .reduce((total, exercise) => 
+      total + exercise.sets.reduce((setTotal, set) => setTotal + ((set.weight || 0) * (set.reps || 0)), 0), 0
+    );
   const totalSets = workout.exercises.reduce((total, exercise) => total + exercise.sets.length, 0);
 
   const handleTouchStart = (e: React.TouchEvent) => {

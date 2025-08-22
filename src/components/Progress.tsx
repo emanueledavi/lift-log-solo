@@ -38,7 +38,7 @@ export function Progress() {
     return exerciseWorkouts.map(workout => {
       const exercise = workout.exercises.find(ex => ex.name === selectedExercise)!;
       const maxWeight = Math.max(...exercise.sets.map(set => set.weight));
-      const totalVolume = exercise.sets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+      const totalVolume = exercise.sets.reduce((sum, set) => sum + ((set.weight || 0) * (set.reps || 0)), 0);
       const avgReps = exercise.sets.reduce((sum, set) => sum + set.reps, 0) / exercise.sets.length;
 
       return {
@@ -64,9 +64,11 @@ export function Progress() {
           month: 'short', 
           day: 'numeric' 
         }),
-        volume: workout.exercises.reduce((total, exercise) => 
-          total + exercise.sets.reduce((setTotal, set) => setTotal + (set.weight * set.reps), 0)
-        , 0)
+        volume: workout.exercises
+          .filter(exercise => exercise.type === 'strength')
+          .reduce((total, exercise) => 
+            total + exercise.sets.reduce((setTotal, set) => setTotal + ((set.weight || 0) * (set.reps || 0)), 0)
+          , 0)
       }));
   }, [workouts]);
 
@@ -82,9 +84,11 @@ export function Progress() {
     }
 
     const totalVolume = workouts.reduce((sum, workout) => 
-      sum + workout.exercises.reduce((exerciseSum, exercise) => 
-        exerciseSum + exercise.sets.reduce((setSum, set) => setSum + (set.weight * set.reps), 0)
-      , 0)
+      sum + workout.exercises
+        .filter(exercise => exercise.type === 'strength')
+        .reduce((exerciseSum, exercise) => 
+          exerciseSum + exercise.sets.reduce((setSum, set) => setSum + ((set.weight || 0) * (set.reps || 0)), 0)
+        , 0)
     , 0);
 
     const totalSets = workouts.reduce((sum, workout) => 

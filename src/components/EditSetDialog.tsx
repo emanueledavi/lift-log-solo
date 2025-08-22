@@ -42,8 +42,7 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
           duration: duration > 0 ? duration : undefined,
           distance: distance > 0 ? distance : undefined,
           speed: speed > 0 ? speed : undefined,
-          incline: incline > 0 ? incline : undefined,
-          calories: calories > 0 ? calories : undefined
+          incline: incline > 0 ? incline : undefined
         };
 
     onSave(set.id, updates);
@@ -167,22 +166,6 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                     placeholder="Inclinazione"
                   />
                 </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="calories">Calorie</Label>
-                <Input
-                  id="calories"
-                  type="number"
-                  value={calories === 0 ? '' : calories}
-                  onChange={(e) => setCalories(Number(e.target.value) || 0)}
-                  onBlur={(e) => {
-                    if (e.target.value === '') {
-                      setCalories(0);
-                    }
-                  }}
-                  placeholder="Calorie bruciate"
-                />
               </div>
             </>
           )}
