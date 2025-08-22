@@ -165,6 +165,74 @@ export function Dashboard() {
           </CardContent>
         </Card>
       )}
+
+      {/* Workout History */}
+      {workouts.length > 0 && (
+        <Card className="gradient-card border-0 shadow-fitness">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold flex items-center">
+              <Calendar className="h-5 w-5 mr-2 text-primary" />
+              Storico Allenamenti
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {workouts
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((workout, index) => {
+                  const workoutVolume = workout.exercises.reduce((total, exercise) => 
+                    total + exercise.sets.reduce((setTotal, set) => setTotal + (set.weight * set.reps), 0), 0
+                  );
+                  const totalSets = workout.exercises.reduce((total, exercise) => total + exercise.sets.length, 0);
+
+                  return (
+                    <div key={workout.id} className="p-4 bg-accent/20 rounded-lg space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {new Date(workout.date).toLocaleDateString('it-IT', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                          {workout.duration && (
+                            <p className="text-sm text-muted-foreground">
+                              Durata: {Math.round(workout.duration)} minuti
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-primary">{Math.round(workoutVolume)}kg</p>
+                          <p className="text-sm text-muted-foreground">{totalSets} serie</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {workout.exercises.map((exercise, idx) => (
+                          <span 
+                            key={idx} 
+                            className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-md font-medium"
+                          >
+                            {exercise.name}
+                          </span>
+                        ))}
+                      </div>
+
+                      {workout.notes && (
+                        <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
+                          {workout.notes}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

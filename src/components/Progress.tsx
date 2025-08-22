@@ -72,6 +72,15 @@ export function Progress() {
 
   // Calculate overall statistics
   const stats = useMemo(() => {
+    if (workouts.length === 0) {
+      return {
+        totalVolume: 0,
+        totalSets: 0,
+        avgWorkoutVolume: 0,
+        thisMonthWorkouts: 0
+      };
+    }
+
     const totalVolume = workouts.reduce((sum, workout) => 
       sum + workout.exercises.reduce((exerciseSum, exercise) => 
         exerciseSum + exercise.sets.reduce((setSum, set) => setSum + (set.weight * set.reps), 0)
@@ -82,7 +91,7 @@ export function Progress() {
       sum + workout.exercises.reduce((exerciseSum, exercise) => exerciseSum + exercise.sets.length, 0)
     , 0);
 
-    const avgWorkoutVolume = workouts.length > 0 ? totalVolume / workouts.length : 0;
+    const avgWorkoutVolume = Math.round(totalVolume / workouts.length);
 
     const thisMonth = new Date();
     thisMonth.setDate(1);
@@ -91,7 +100,7 @@ export function Progress() {
     return {
       totalVolume: Math.round(totalVolume),
       totalSets,
-      avgWorkoutVolume: Math.round(avgWorkoutVolume),
+      avgWorkoutVolume,
       thisMonthWorkouts
     };
   }, [workouts]);
