@@ -129,16 +129,26 @@ export function AddExerciseDialog({ isOpen, onClose, onSave }: AddExerciseDialog
                         <Label className="text-xs">Peso (kg)</Label>
                         <Input
                           type="number"
-                          value={set.weight || 0}
-                          onChange={(e) => updateSet(index, 'weight', Number(e.target.value))}
+                          value={set.weight === 0 ? '' : set.weight || ''}
+                          onChange={(e) => updateSet(index, 'weight', Number(e.target.value) || 0)}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateSet(index, 'weight', 0);
+                            }
+                          }}
                         />
                       </div>
                       <div>
                         <Label className="text-xs">Ripetizioni</Label>
                         <Input
                           type="number"
-                          value={set.reps || 0}
-                          onChange={(e) => updateSet(index, 'reps', Number(e.target.value))}
+                          value={set.reps === 0 ? '' : set.reps || ''}
+                          onChange={(e) => updateSet(index, 'reps', Number(e.target.value) || 0)}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateSet(index, 'reps', 0);
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -148,8 +158,13 @@ export function AddExerciseDialog({ isOpen, onClose, onSave }: AddExerciseDialog
                         <Label className="text-xs">Durata (min)</Label>
                         <Input
                           type="number"
-                          value={set.duration || 0}
-                          onChange={(e) => updateSet(index, 'duration', Number(e.target.value))}
+                          value={set.duration === 0 ? '' : set.duration || ''}
+                          onChange={(e) => updateSet(index, 'duration', Number(e.target.value) || 0)}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateSet(index, 'duration', 0);
+                            }
+                          }}
                         />
                       </div>
                       <div>
@@ -157,8 +172,13 @@ export function AddExerciseDialog({ isOpen, onClose, onSave }: AddExerciseDialog
                         <Input
                           type="number"
                           step="0.1"
-                          value={set.distance || 0}
-                          onChange={(e) => updateSet(index, 'distance', Number(e.target.value))}
+                          value={set.distance === 0 ? '' : set.distance || ''}
+                          onChange={(e) => updateSet(index, 'distance', Number(e.target.value) || 0)}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateSet(index, 'distance', 0);
+                            }
+                          }}
                         />
                       </div>
                       <div>
@@ -166,8 +186,13 @@ export function AddExerciseDialog({ isOpen, onClose, onSave }: AddExerciseDialog
                         <Input
                           type="number"
                           step="0.1"
-                          value={set.speed || 0}
-                          onChange={(e) => updateSet(index, 'speed', Number(e.target.value))}
+                          value={set.speed === 0 ? '' : set.speed || ''}
+                          onChange={(e) => updateSet(index, 'speed', Number(e.target.value) || 0)}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateSet(index, 'speed', 0);
+                            }
+                          }}
                         />
                       </div>
                       <div>
@@ -175,8 +200,13 @@ export function AddExerciseDialog({ isOpen, onClose, onSave }: AddExerciseDialog
                         <Input
                           type="number"
                           step="0.1"
-                          value={set.incline || 0}
-                          onChange={(e) => updateSet(index, 'incline', Number(e.target.value))}
+                          value={set.incline === 0 ? '' : set.incline || ''}
+                          onChange={(e) => updateSet(index, 'incline', Number(e.target.value) || 0)}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateSet(index, 'incline', 0);
+                            }
+                          }}
                         />
                       </div>
                     </div>

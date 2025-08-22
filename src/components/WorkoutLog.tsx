@@ -253,16 +253,26 @@ export function WorkoutLog() {
                         type="number"
                         inputMode="decimal"
                         placeholder="0"
-                        value={set.weight || ''}
+                        value={set.weight === 0 ? '' : set.weight}
                         onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
+                        onBlur={(e) => {
+                          if (e.target.value === '') {
+                            updateSet(exercise.id, set.id, 'weight', 0);
+                          }
+                        }}
                         className="text-center touch-manipulation"
                       />
                       <Input
                         type="number"
                         inputMode="numeric"
                         placeholder="0"
-                        value={set.reps || ''}
+                        value={set.reps === 0 ? '' : set.reps}
                         onChange={(e) => updateSet(exercise.id, set.id, 'reps', parseInt(e.target.value) || 0)}
+                        onBlur={(e) => {
+                          if (e.target.value === '') {
+                            updateSet(exercise.id, set.id, 'reps', 0);
+                          }
+                        }}
                         className="text-center touch-manipulation"
                       />
                       <Button

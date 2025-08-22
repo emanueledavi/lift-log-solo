@@ -69,8 +69,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                 <Input
                   id="weight"
                   type="number"
-                  value={weight}
-                  onChange={(e) => setWeight(Number(e.target.value))}
+                  value={weight === 0 ? '' : weight}
+                  onChange={(e) => setWeight(Number(e.target.value) || 0)}
+                  onBlur={(e) => {
+                    if (e.target.value === '') {
+                      setWeight(0);
+                    }
+                  }}
                   placeholder="Inserisci il peso"
                 />
               </div>
@@ -80,8 +85,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                 <Input
                   id="reps"
                   type="number"
-                  value={reps}
-                  onChange={(e) => setReps(Number(e.target.value))}
+                  value={reps === 0 ? '' : reps}
+                  onChange={(e) => setReps(Number(e.target.value) || 0)}
+                  onBlur={(e) => {
+                    if (e.target.value === '') {
+                      setReps(0);
+                    }
+                  }}
                   placeholder="Inserisci le ripetizioni"
                 />
               </div>
@@ -94,8 +104,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                   <Input
                     id="duration"
                     type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(Number(e.target.value))}
+                    value={duration === 0 ? '' : duration}
+                    onChange={(e) => setDuration(Number(e.target.value) || 0)}
+                    onBlur={(e) => {
+                      if (e.target.value === '') {
+                        setDuration(0);
+                      }
+                    }}
                     placeholder="Durata"
                   />
                 </div>
@@ -106,8 +121,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                     id="distance"
                     type="number"
                     step="0.1"
-                    value={distance}
-                    onChange={(e) => setDistance(Number(e.target.value))}
+                    value={distance === 0 ? '' : distance}
+                    onChange={(e) => setDistance(Number(e.target.value) || 0)}
+                    onBlur={(e) => {
+                      if (e.target.value === '') {
+                        setDistance(0);
+                      }
+                    }}
                     placeholder="Distanza"
                   />
                 </div>
@@ -120,8 +140,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                     id="speed"
                     type="number"
                     step="0.1"
-                    value={speed}
-                    onChange={(e) => setSpeed(Number(e.target.value))}
+                    value={speed === 0 ? '' : speed}
+                    onChange={(e) => setSpeed(Number(e.target.value) || 0)}
+                    onBlur={(e) => {
+                      if (e.target.value === '') {
+                        setSpeed(0);
+                      }
+                    }}
                     placeholder="Velocità"
                   />
                 </div>
@@ -132,8 +157,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                     id="incline"
                     type="number"
                     step="0.1"
-                    value={incline}
-                    onChange={(e) => setIncline(Number(e.target.value))}
+                    value={incline === 0 ? '' : incline}
+                    onChange={(e) => setIncline(Number(e.target.value) || 0)}
+                    onBlur={(e) => {
+                      if (e.target.value === '') {
+                        setIncline(0);
+                      }
+                    }}
                     placeholder="Inclinazione"
                   />
                 </div>
@@ -144,8 +174,13 @@ export function EditSetDialog({ set, isOpen, onClose, onSave }: EditSetDialogPro
                 <Input
                   id="calories"
                   type="number"
-                  value={calories}
-                  onChange={(e) => setCalories(Number(e.target.value))}
+                  value={calories === 0 ? '' : calories}
+                  onChange={(e) => setCalories(Number(e.target.value) || 0)}
+                  onBlur={(e) => {
+                    if (e.target.value === '') {
+                      setCalories(0);
+                    }
+                  }}
                   placeholder="Calorie bruciate"
                 />
               </div>
