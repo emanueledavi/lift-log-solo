@@ -1,13 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock, Target, Weight, BarChart3, Trash2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Target, Weight, BarChart3, Trash2, Plus } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { Workout, Set } from "@/types/fitness";
+import { Workout, Set, Exercise } from "@/types/fitness";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, BarChart, Bar } from 'recharts';
 import { useMemo, useState } from "react";
 import { SetCard } from "@/components/SetCard";
+import { CardioSetCard } from "@/components/CardioSetCard";
 import { EditSetDialog } from "@/components/EditSetDialog";
+import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { useToast } from "@/hooks/use-toast";
 
 export function WorkoutDetails() {
@@ -16,6 +18,7 @@ export function WorkoutDetails() {
   const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
   const [editingSet, setEditingSet] = useState<Set | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddExerciseOpen, setIsAddExerciseOpen] = useState(false);
   const { toast } = useToast();
   
   const workout = useMemo(() => 
@@ -34,7 +37,7 @@ export function WorkoutDetails() {
     }
   };
 
-  const handleSaveSet = (setId: string, weight: number, reps: number) => {
+  const handleSaveSet = (setId: string, updates: Partial<Set>) => {
     const updatedWorkouts = workouts.map(w => {
       if (w.id === workoutId) {
         return {
@@ -42,7 +45,7 @@ export function WorkoutDetails() {
           exercises: w.exercises.map(ex => ({
             ...ex,
             sets: ex.sets.map(s => 
-              s.id === setId ? { ...s, weight, reps } : s
+              s.id === setId ? { ...s, ...updates } : s
             )
           }))
         };
@@ -54,6 +57,24 @@ export function WorkoutDetails() {
     toast({
       title: "Serie modificata",
       description: "La serie è stata aggiornata con successo.",
+    });
+  };
+
+  const handleAddExercise = (exercise: Exercise) => {
+    const updatedWorkouts = workouts.map(w => {
+      if (w.id === workoutId) {
+        return {
+          ...w,
+          exercises: [...w.exercises, exercise]
+        };
+      }
+      return w;
+    });
+
+    setWorkouts(updatedWorkouts);
+    toast({
+      title: "Esercizio aggiunto",
+      description: "L'esercizio è stato aggiunto all'allenamento.",
     });
   };
 
@@ -116,23 +137,49 @@ export function WorkoutDetails() {
   }
 
   const workoutStats = useMemo(() => {
-    const totalVolume = workout.exercises.reduce((sum, exercise) => 
-      sum + exercise.sets.reduce((setSum, set) => setSum + (set.weight * set.reps), 0), 0
-    );
+    if (!workout) return { totalVolume: 0, totalSets: 0, totalReps: 0, avgWeight: 0, totalCalories: 0, totalCardioTime: 0 };
+
+    const totalVolume = workout.exercises
+      .filter(ex => ex.type === 'strength')
+      .reduce((sum, exercise) => 
+        sum + exercise.sets.reduce((setSum, set) => setSum + ((set.weight || 0) * (set.reps || 0)), 0), 0
+      );
+    
     const totalSets = workout.exercises.reduce((sum, exercise) => sum + exercise.sets.length, 0);
-    const totalReps = workout.exercises.reduce((sum, exercise) => 
-      sum + exercise.sets.reduce((setSum, set) => setSum + set.reps, 0), 0
-    );
-    const avgWeight = workout.exercises.reduce((sum, exercise) => {
-      const exerciseAvg = exercise.sets.reduce((setSum, set) => setSum + set.weight, 0) / exercise.sets.length;
-      return sum + exerciseAvg;
-    }, 0) / workout.exercises.length;
+    
+    const totalReps = workout.exercises
+      .filter(ex => ex.type === 'strength')
+      .reduce((sum, exercise) => 
+        sum + exercise.sets.reduce((setSum, set) => setSum + (set.reps || 0), 0), 0
+      );
+    
+    const strengthExercises = workout.exercises.filter(ex => ex.type === 'strength');
+    const avgWeight = strengthExercises.length > 0 
+      ? strengthExercises.reduce((sum, exercise) => {
+          const exerciseAvg = exercise.sets.reduce((setSum, set) => setSum + (set.weight || 0), 0) / exercise.sets.length;
+          return sum + exerciseAvg;
+        }, 0) / strengthExercises.length
+      : 0;
+
+    const totalCalories = workout.exercises
+      .filter(ex => ex.type === 'cardio')
+      .reduce((sum, exercise) => 
+        sum + exercise.sets.reduce((setSum, set) => setSum + (set.calories || 0), 0), 0
+      );
+
+    const totalCardioTime = workout.exercises
+      .filter(ex => ex.type === 'cardio')
+      .reduce((sum, exercise) => 
+        sum + exercise.sets.reduce((setSum, set) => setSum + (set.duration || 0), 0), 0
+      );
 
     return {
       totalVolume: Math.round(totalVolume),
       totalSets,
       totalReps,
-      avgWeight: Math.round(avgWeight * 10) / 10
+      avgWeight: Math.round(avgWeight * 10) / 10,
+      totalCalories: Math.round(totalCalories),
+      totalCardioTime: Math.round(totalCardioTime)
     };
   }, [workout]);
 
@@ -191,52 +238,76 @@ export function WorkoutDetails() {
         </div>
 
         {/* Workout Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           <Card className="gradient-card border-0 shadow-fitness">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Weight className="h-5 w-5 text-primary" />
+                <Weight className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Volume Totale</p>
-                  <p className="text-2xl font-bold text-foreground">{workoutStats.totalVolume}kg</p>
+                  <p className="text-xs font-medium text-muted-foreground">Volume</p>
+                  <p className="text-lg font-bold text-foreground">{workoutStats.totalVolume}kg</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="gradient-card border-0 shadow-fitness">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Target className="h-5 w-5 text-secondary" />
+                <Target className="h-4 w-4 text-secondary" />
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Serie Totali</p>
-                  <p className="text-2xl font-bold text-foreground">{workoutStats.totalSets}</p>
+                  <p className="text-xs font-medium text-muted-foreground">Serie</p>
+                  <p className="text-lg font-bold text-foreground">{workoutStats.totalSets}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="gradient-card border-0 shadow-fitness">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <BarChart3 className="h-5 w-5 text-accent-foreground" />
+                <BarChart3 className="h-4 w-4 text-accent-foreground" />
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Rep Totali</p>
-                  <p className="text-2xl font-bold text-foreground">{workoutStats.totalReps}</p>
+                  <p className="text-xs font-medium text-muted-foreground">Rep</p>
+                  <p className="text-lg font-bold text-foreground">{workoutStats.totalReps}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="gradient-card border-0 shadow-fitness">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Clock className="h-5 w-5 text-warning" />
+                <Clock className="h-4 w-4 text-warning" />
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Durata</p>
-                  <p className="text-2xl font-bold text-foreground">
+                  <p className="text-xs font-medium text-muted-foreground">Durata</p>
+                  <p className="text-lg font-bold text-foreground">
                     {workout.duration ? `${Math.round(workout.duration)}m` : 'N/A'}
                   </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="gradient-card border-0 shadow-fitness">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Target className="h-4 w-4 text-primary" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Calorie</p>
+                  <p className="text-lg font-bold text-foreground">{workoutStats.totalCalories}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="gradient-card border-0 shadow-fitness">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-secondary" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Cardio</p>
+                  <p className="text-lg font-bold text-foreground">{workoutStats.totalCardioTime}min</p>
                 </div>
               </div>
             </CardContent>
@@ -342,24 +413,51 @@ export function WorkoutDetails() {
         {/* Detailed Exercise Breakdown */}
         <Card className="gradient-card border-0 shadow-fitness">
           <CardHeader>
-            <CardTitle>Dettaglio Esercizi</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Dettaglio Esercizi</CardTitle>
+              <Button onClick={() => setIsAddExerciseOpen(true)} size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Aggiungi Esercizio
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {workout.exercises.map((exercise, exerciseIndex) => (
-                <div key={exercise.id} className="border-l-4 border-primary pl-4 space-y-3">
-                  <h3 className="text-lg font-semibold text-foreground">{exercise.name}</h3>
+                <div key={exercise.id} className={`border-l-4 pl-4 space-y-3 ${
+                  exercise.type === 'cardio' ? 'border-secondary' : 'border-primary'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-foreground">{exercise.name}</h3>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      exercise.type === 'cardio' 
+                        ? 'bg-secondary/20 text-secondary' 
+                        : 'bg-primary/20 text-primary'
+                    }`}>
+                      {exercise.type === 'cardio' ? 'Cardio' : 'Forza'}
+                    </span>
+                  </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {exercise.sets.map((set, setIndex) => (
-                      <SetCard
-                        key={set.id}
-                        set={set}
-                        setIndex={setIndex}
-                        onEdit={handleEditSet}
-                        onDelete={handleDeleteSet}
-                      />
-                    ))}
+                    {exercise.sets.map((set, setIndex) => 
+                      exercise.type === 'cardio' ? (
+                        <CardioSetCard
+                          key={set.id}
+                          set={set}
+                          setIndex={setIndex}
+                          onEdit={handleEditSet}
+                          onDelete={handleDeleteSet}
+                        />
+                      ) : (
+                        <SetCard
+                          key={set.id}
+                          set={set}
+                          setIndex={setIndex}
+                          onEdit={handleEditSet}
+                          onDelete={handleDeleteSet}
+                        />
+                      )
+                    )}
                   </div>
 
                   {exercise.notes && (
@@ -410,6 +508,13 @@ export function WorkoutDetails() {
           setEditingSet(null);
         }}
         onSave={handleSaveSet}
+      />
+
+      {/* Add Exercise Dialog */}
+      <AddExerciseDialog
+        isOpen={isAddExerciseOpen}
+        onClose={() => setIsAddExerciseOpen(false)}
+        onSave={handleAddExercise}
       />
     </div>
   );

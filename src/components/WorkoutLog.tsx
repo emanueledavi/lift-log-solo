@@ -25,7 +25,8 @@ export function WorkoutLog() {
     const newExercise: Exercise = {
       id: Date.now().toString(),
       name: '',
-      sets: [{ id: Date.now().toString() + '_1', reps: 0, weight: 0 }],
+      type: 'strength',
+      sets: [{ id: Date.now().toString() + '_1', type: 'strength', reps: 0, weight: 0 }],
       notes: ''
     };
     
@@ -54,6 +55,7 @@ export function WorkoutLog() {
   const addSet = (exerciseId: string) => {
     const newSet: Set = {
       id: Date.now().toString(),
+      type: 'strength',
       reps: 0,
       weight: 0
     };
@@ -128,18 +130,18 @@ export function WorkoutLog() {
 
     // Check for personal bests
     currentWorkout.exercises.forEach(exercise => {
-      if (exercise.name.trim()) {
+      if (exercise.name.trim() && exercise.type === 'strength') {
         const maxSet = exercise.sets.reduce((max, set) => 
-          set.weight > max.weight ? set : max
+          (set.weight || 0) > (max.weight || 0) ? set : max
         );
 
         const existingPB = personalBests.find(pb => pb.exerciseName === exercise.name);
         
-        if (!existingPB || maxSet.weight > existingPB.weight) {
+        if (maxSet.weight && (!existingPB || maxSet.weight > existingPB.weight)) {
           const newPB: PersonalBest = {
             exerciseName: exercise.name,
             weight: maxSet.weight,
-            reps: maxSet.reps,
+            reps: maxSet.reps || 0,
             date: currentWorkout.date
           };
 

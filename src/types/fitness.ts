@@ -1,14 +1,23 @@
 export interface Exercise {
   id: string;
   name: string;
+  type: 'strength' | 'cardio';
   sets: Set[];
   notes?: string;
 }
 
 export interface Set {
   id: string;
-  reps: number;
-  weight: number;
+  type: 'strength' | 'cardio';
+  // Strength properties
+  reps?: number;
+  weight?: number;
+  // Cardio properties  
+  duration?: number; // in minutes
+  distance?: number; // in km
+  speed?: number; // in km/h
+  incline?: number; // in percentage
+  calories?: number;
 }
 
 export interface Workout {
