@@ -7,6 +7,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Workout, Exercise, Set, PersonalBest } from "@/types/fitness";
 import { Plus, Trash2, Save, Calendar, Timer } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { ExerciseTypeSelectionDialog } from "./ExerciseTypeSelectionDialog";
 
 export function WorkoutLog() {
   const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
@@ -20,13 +21,25 @@ export function WorkoutLog() {
   });
 
   const [startTime, setStartTime] = useState<Date | null>(null);
+  const [isExerciseTypeDialogOpen, setIsExerciseTypeDialogOpen] = useState(false);
 
   const addExercise = () => {
+    setIsExerciseTypeDialogOpen(true);
+  };
+
+  const handleExerciseTypeSelection = (type: 'strength' | 'cardio') => {
     const newExercise: Exercise = {
       id: Date.now().toString(),
       name: '',
-      type: 'strength',
-      sets: [{ id: Date.now().toString() + '_1', type: 'strength', reps: 0, weight: 0 }],
+      type,
+      sets: [{ 
+        id: Date.now().toString() + '_1', 
+        type,
+        ...(type === 'strength' 
+          ? { reps: 0, weight: 0 }
+          : { duration: 0, distance: 0, speed: 0, incline: 0 }
+        )
+      }],
       notes: ''
     };
     
@@ -53,11 +66,16 @@ export function WorkoutLog() {
   };
 
   const addSet = (exerciseId: string) => {
+    const exercise = currentWorkout.exercises.find(ex => ex.id === exerciseId);
+    if (!exercise) return;
+
     const newSet: Set = {
       id: Date.now().toString(),
-      type: 'strength',
-      reps: 0,
-      weight: 0
+      type: exercise.type,
+      ...(exercise.type === 'strength' 
+        ? { reps: 0, weight: 0 }
+        : { duration: 0, distance: 0, speed: 0, incline: 0 }
+      )
     };
 
     setCurrentWorkout(prev => ({
@@ -239,53 +257,156 @@ export function WorkoutLog() {
 
                 {/* Sets - Mobile Optimized */}
                 <div className="space-y-3">
-                  <div className="grid grid-cols-4 gap-2 text-sm font-medium text-muted-foreground px-1">
-                    <span>Set</span>
-                    <span>Kg</span>
-                    <span>Reps</span>
-                    <span></span>
-                  </div>
-                  
-                  {exercise.sets.map((set, setIndex) => (
-                    <div key={set.id} className="grid grid-cols-4 gap-2 items-center">
-                      <span className="text-sm font-medium text-center bg-muted/50 rounded-md py-2">{setIndex + 1}</span>
-                      <Input
-                        type="number"
-                        inputMode="decimal"
-                        placeholder="0"
-                        value={set.weight === 0 ? '' : set.weight}
-                        onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
-                        onBlur={(e) => {
-                          if (e.target.value === '') {
-                            updateSet(exercise.id, set.id, 'weight', 0);
-                          }
-                        }}
-                        className="text-center touch-manipulation"
-                      />
-                      <Input
-                        type="number"
-                        inputMode="numeric"
-                        placeholder="0"
-                        value={set.reps === 0 ? '' : set.reps}
-                        onChange={(e) => updateSet(exercise.id, set.id, 'reps', parseInt(e.target.value) || 0)}
-                        onBlur={(e) => {
-                          if (e.target.value === '') {
-                            updateSet(exercise.id, set.id, 'reps', 0);
-                          }
-                        }}
-                        className="text-center touch-manipulation"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeSet(exercise.id, set.id)}
-                        disabled={exercise.sets.length === 1}
-                        className="text-destructive hover:text-destructive touch-manipulation min-h-[44px]"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
+                  {exercise.type === 'strength' ? (
+                    <>
+                      <div className="grid grid-cols-4 gap-2 text-sm font-medium text-muted-foreground px-1">
+                        <span>Set</span>
+                        <span>Kg</span>
+                        <span>Reps</span>
+                        <span></span>
+                      </div>
+                      
+                      {exercise.sets.map((set, setIndex) => (
+                        <div key={set.id} className="grid grid-cols-4 gap-2 items-center">
+                          <span className="text-sm font-medium text-center bg-muted/50 rounded-md py-2">{setIndex + 1}</span>
+                          <Input
+                            type="number"
+                            inputMode="decimal"
+                            placeholder="0"
+                            value={set.weight === 0 ? '' : set.weight}
+                            onChange={(e) => updateSet(exercise.id, set.id, 'weight', parseFloat(e.target.value) || 0)}
+                            onBlur={(e) => {
+                              if (e.target.value === '') {
+                                updateSet(exercise.id, set.id, 'weight', 0);
+                              }
+                            }}
+                            className="text-center touch-manipulation"
+                          />
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            placeholder="0"
+                            value={set.reps === 0 ? '' : set.reps}
+                            onChange={(e) => updateSet(exercise.id, set.id, 'reps', parseInt(e.target.value) || 0)}
+                            onBlur={(e) => {
+                              if (e.target.value === '') {
+                                updateSet(exercise.id, set.id, 'reps', 0);
+                              }
+                            }}
+                            className="text-center touch-manipulation"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeSet(exercise.id, set.id)}
+                            disabled={exercise.sets.length === 1}
+                            className="text-destructive hover:text-destructive touch-manipulation min-h-[44px]"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-2 gap-2 text-sm font-medium text-muted-foreground px-1">
+                        <span>Set</span>
+                        <span></span>
+                      </div>
+                      
+                      {exercise.sets.map((set, setIndex) => (
+                        <div key={set.id} className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium bg-muted/50 rounded-md px-3 py-2">Set {setIndex + 1}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeSet(exercise.id, set.id)}
+                              disabled={exercise.sets.length === 1}
+                              className="text-destructive hover:text-destructive touch-manipulation min-h-[44px]"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <label className="text-xs text-muted-foreground">Minuti</label>
+                              <Input
+                                type="number"
+                                inputMode="decimal"
+                                placeholder="0"
+                                value={set.duration === 0 ? '' : set.duration}
+                                onChange={(e) => updateSet(exercise.id, set.id, 'duration', parseFloat(e.target.value) || 0)}
+                                onBlur={(e) => {
+                                  if (e.target.value === '') {
+                                    updateSet(exercise.id, set.id, 'duration', 0);
+                                  }
+                                }}
+                                className="text-center touch-manipulation"
+                              />
+                            </div>
+                            
+                            <div className="space-y-1">
+                              <label className="text-xs text-muted-foreground">Distanza (km)</label>
+                              <Input
+                                type="number"
+                                inputMode="decimal"
+                                step="0.1"
+                                placeholder="0"
+                                value={set.distance === 0 ? '' : set.distance}
+                                onChange={(e) => updateSet(exercise.id, set.id, 'distance', parseFloat(e.target.value) || 0)}
+                                onBlur={(e) => {
+                                  if (e.target.value === '') {
+                                    updateSet(exercise.id, set.id, 'distance', 0);
+                                  }
+                                }}
+                                className="text-center touch-manipulation"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <label className="text-xs text-muted-foreground">Velocità (km/h)</label>
+                              <Input
+                                type="number"
+                                inputMode="decimal"
+                                step="0.1"
+                                placeholder="0"
+                                value={set.speed === 0 ? '' : set.speed}
+                                onChange={(e) => updateSet(exercise.id, set.id, 'speed', parseFloat(e.target.value) || 0)}
+                                onBlur={(e) => {
+                                  if (e.target.value === '') {
+                                    updateSet(exercise.id, set.id, 'speed', 0);
+                                  }
+                                }}
+                                className="text-center touch-manipulation"
+                              />
+                            </div>
+                            
+                            <div className="space-y-1">
+                              <label className="text-xs text-muted-foreground">Inclinazione (%)</label>
+                              <Input
+                                type="number"
+                                inputMode="decimal"
+                                step="0.1"
+                                placeholder="0"
+                                value={set.incline === 0 ? '' : set.incline}
+                                onChange={(e) => updateSet(exercise.id, set.id, 'incline', parseFloat(e.target.value) || 0)}
+                                onBlur={(e) => {
+                                  if (e.target.value === '') {
+                                    updateSet(exercise.id, set.id, 'incline', 0);
+                                  }
+                                }}
+                                className="text-center touch-manipulation"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
                   
                   <Button
                     variant="outline"
@@ -343,6 +464,12 @@ export function WorkoutLog() {
           </Button>
         </CardContent>
       </Card>
+      
+      <ExerciseTypeSelectionDialog
+        isOpen={isExerciseTypeDialogOpen}
+        onClose={() => setIsExerciseTypeDialogOpen(false)}
+        onSelectType={handleExerciseTypeSelection}
+      />
     </div>
   );
 }
