@@ -44,6 +44,32 @@ export function Achievements() {
   const [workouts] = useLocalStorage<Workout[]>("workouts", []);
   const [personalBests] = useLocalStorage<PersonalBest[]>("personalBests", []);
 
+  const calculateStreak = (workouts: Workout[]) => {
+    if (workouts.length === 0) return 0;
+    
+    const sortedDates = workouts
+      .map(w => new Date(w.date).toDateString())
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    
+    let streak = 1;
+    let maxStreak = 1;
+    
+    for (let i = 1; i < sortedDates.length; i++) {
+      const current = new Date(sortedDates[i]);
+      const previous = new Date(sortedDates[i - 1]);
+      const diffDays = Math.abs(previous.getTime() - current.getTime()) / (1000 * 60 * 60 * 24);
+      
+      if (diffDays === 1) {
+        streak++;
+        maxStreak = Math.max(maxStreak, streak);
+      } else {
+        streak = 1;
+      }
+    }
+    
+    return maxStreak;
+  };
+
   const achievements = useMemo(() => {
     const totalWorkouts = workouts.length;
     const thisMonth = new Date().getMonth();
@@ -184,31 +210,6 @@ export function Achievements() {
     });
   }, [workouts, personalBests]);
 
-  const calculateStreak = (workouts: Workout[]) => {
-    if (workouts.length === 0) return 0;
-    
-    const sortedDates = workouts
-      .map(w => new Date(w.date).toDateString())
-      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-    
-    let streak = 1;
-    let maxStreak = 1;
-    
-    for (let i = 1; i < sortedDates.length; i++) {
-      const current = new Date(sortedDates[i]);
-      const previous = new Date(sortedDates[i - 1]);
-      const diffDays = Math.abs(previous.getTime() - current.getTime()) / (1000 * 60 * 60 * 24);
-      
-      if (diffDays === 1) {
-        streak++;
-        maxStreak = Math.max(maxStreak, streak);
-      } else {
-        streak = 1;
-      }
-    }
-    
-    return maxStreak;
-  };
 
   const unlockedAchievements = achievements.filter(a => a.unlocked);
   const totalAchievements = achievements.length;
