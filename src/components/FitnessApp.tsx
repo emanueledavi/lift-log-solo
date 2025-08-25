@@ -6,6 +6,8 @@ import { WorkoutPlansComponent } from "./WorkoutPlans";
 import { Progress } from "./Progress";
 import { CalorieCalculator } from "./CalorieCalculator";
 import { RestTimer } from "./RestTimer";
+import { ExerciseDatabase } from "./ExerciseDatabase";
+import { Achievements } from "./Achievements";
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -13,7 +15,9 @@ import {
   TrendingUp, 
   Calculator, 
   Timer,
-  Dumbbell
+  Dumbbell,
+  Database,
+  Trophy
 } from "lucide-react";
 
 export function FitnessApp() {
@@ -33,6 +37,12 @@ export function FitnessApp() {
       component: WorkoutLog
     },
     {
+      id: "exercises",
+      label: "Esercizi",
+      icon: Database,
+      component: ExerciseDatabase
+    },
+    {
       id: "workout-plans",
       label: "Schede",
       icon: Target,
@@ -43,6 +53,12 @@ export function FitnessApp() {
       label: "Progressi",
       icon: TrendingUp,
       component: Progress
+    },
+    {
+      id: "achievements",
+      label: "Traguardi",
+      icon: Trophy,
+      component: Achievements
     },
     {
       id: "calories",
@@ -81,7 +97,7 @@ export function FitnessApp() {
       <main className="container mx-auto px-3 py-4 pb-20">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           {/* Navigation Tabs - Mobile Optimized */}
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto p-1 bg-card border shadow-fitness">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 h-auto p-1 bg-card border shadow-fitness">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.id}

@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { Workout, PersonalBest, Progress } from "@/types/fitness";
+import { Workout, PersonalBest } from "@/types/fitness";
 import { TrendingUp, Calendar, Timer, Trophy } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { WorkoutHistoryCard } from "@/components/WorkoutHistoryCard";
+import { MotivationalMessages } from "@/components/MotivationalMessages";
 import { useToast } from "@/hooks/use-toast";
 
 export function Dashboard() {
@@ -48,6 +48,9 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6 animate-slide-up">
+      {/* Motivational Messages */}
+      <MotivationalMessages />
+
       {/* Header */}
       <div className="gradient-hero rounded-xl p-6 text-white">
         <h1 className="text-3xl font-bold mb-2">Bentornato nel tuo Fitness Journey! 💪</h1>
