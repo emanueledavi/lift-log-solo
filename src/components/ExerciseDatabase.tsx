@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AddExerciseToDatabase } from "./AddExerciseToDatabase";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { 
   Search, 
   Dumbbell, 
@@ -27,6 +29,7 @@ interface Exercise {
   tips: string[];
   videoUrl?: string;
   duration?: string;
+  isCustom?: boolean;
 }
 
 const exerciseDatabase: Exercise[] = [
@@ -164,11 +167,15 @@ const exerciseDatabase: Exercise[] = [
 ];
 
 export function ExerciseDatabase() {
+  const [customExercises] = useLocalStorage<Exercise[]>("customExercises", []);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
 
-  const filteredExercises = exerciseDatabase.filter(exercise => {
+  // Combine default exercises with custom exercises
+  const allExercises = [...exerciseDatabase, ...customExercises];
+
+  const filteredExercises = allExercises.filter(exercise => {
     const matchesSearch = exercise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          exercise.targetMuscles.some(muscle => muscle.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === "all" || exercise.category === selectedCategory;
@@ -199,13 +206,16 @@ export function ExerciseDatabase() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">
-          Database Esercizi
-        </h1>
-        <p className="text-muted-foreground">
-          Catalogo completo con istruzioni dettagliate per ogni esercizio
-        </p>
+      <div className="flex justify-between items-center">
+        <div className="text-center space-y-2 flex-1">
+          <h1 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">
+            Database Esercizi
+          </h1>
+          <p className="text-muted-foreground">
+            Catalogo completo con istruzioni dettagliate per ogni esercizio
+          </p>
+        </div>
+        <AddExerciseToDatabase />
       </div>
 
       {/* Search and Filters */}
@@ -253,6 +263,11 @@ export function ExerciseDatabase() {
                   {getCategoryIcon(exercise.category)}
                   <CardTitle className="text-lg group-hover:text-primary transition-colors">
                     {exercise.name}
+                    {exercise.isCustom && (
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        Personalizzato
+                      </Badge>
+                    )}
                   </CardTitle>
                 </div>
                 <Badge className={getDifficultyColor(exercise.difficulty)}>

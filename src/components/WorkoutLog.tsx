@@ -8,6 +8,7 @@ import { Workout, Exercise, Set, PersonalBest } from "@/types/fitness";
 import { Plus, Trash2, Save, Calendar, Timer } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { ExerciseTypeSelectionDialog } from "./ExerciseTypeSelectionDialog";
+import { ExerciseSelector } from "./ExerciseSelector";
 
 export function WorkoutLog() {
   const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
@@ -22,6 +23,7 @@ export function WorkoutLog() {
 
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [isExerciseTypeDialogOpen, setIsExerciseTypeDialogOpen] = useState(false);
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
 
   const addExercise = () => {
     setIsExerciseTypeDialogOpen(true);
@@ -239,12 +241,23 @@ export function WorkoutLog() {
             <Card key={exercise.id} className="bg-muted/20 border-border/50">
               <CardContent className="p-4 space-y-4">
                 <div className="flex justify-between items-center">
-                  <Input
-                    placeholder="Nome esercizio (es. Panca piana)"
-                    value={exercise.name}
-                    onChange={(e) => updateExercise(exercise.id, 'name', e.target.value)}
-                    className="flex-1 mr-4 font-medium"
-                  />
+                  <div className="flex-1 mr-4">
+                    {exercise.name ? (
+                      <Input
+                        placeholder="Nome esercizio (es. Panca piana)"
+                        value={exercise.name}
+                        onChange={(e) => updateExercise(exercise.id, 'name', e.target.value)}
+                        className="font-medium"
+                      />
+                    ) : (
+                      <ExerciseSelector
+                        onExerciseSelect={(selectedExercise) => {
+                          updateExercise(exercise.id, 'name', selectedExercise.name);
+                        }}
+                        exerciseType={exercise.type}
+                      />
+                    )}
+                  </div>
                   <Button
                     variant="outline"
                     size="sm"
