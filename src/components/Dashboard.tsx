@@ -1,15 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { Workout, PersonalBest } from "@/types/fitness";
-import { TrendingUp, Calendar, Timer, Trophy } from "lucide-react";
+import { Workout, PersonalBest, WorkoutPlan } from "@/types/fitness";
+import { TrendingUp, Calendar, Timer, Trophy, PlayCircle, Target, Clock } from "lucide-react";
 import { WorkoutHistoryCard } from "@/components/WorkoutHistoryCard";
 import { MotivationalMessages } from "@/components/MotivationalMessages";
+import { GuidedWorkout } from "@/components/GuidedWorkout";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export function Dashboard() {
   const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
   const [personalBests] = useLocalStorage<PersonalBest[]>('fitness-personal-bests', []);
+  const [workoutPlans] = useLocalStorage<WorkoutPlan[]>('fitness-workout-plans', []);
+  const [activeGuidedWorkout, setActiveGuidedWorkout] = useState<WorkoutPlan | null>(null);
   const { toast } = useToast();
 
   const handleDeleteWorkout = (workoutId: string) => {
@@ -18,6 +23,22 @@ export function Dashboard() {
     toast({
       title: "Allenamento eliminato",
       description: "L'allenamento è stato eliminato con successo.",
+    });
+  };
+
+  // Get today's workout plan
+  const today = new Date().getDay();
+  const todayWorkoutPlan = workoutPlans.find(plan => plan.dayOfWeek === today);
+
+  const startGuidedWorkout = (plan: WorkoutPlan) => {
+    setActiveGuidedWorkout(plan);
+  };
+
+  const completeGuidedWorkout = () => {
+    setActiveGuidedWorkout(null);
+    toast({
+      title: "Allenamento completato! 🎉",
+      description: "Ottimo lavoro! Controlla il tuo storico per vedere i progressi.",
     });
   };
 
@@ -46,6 +67,17 @@ export function Dashboard() {
         , 0)
     }));
 
+  // Show guided workout if active
+  if (activeGuidedWorkout) {
+    return (
+      <GuidedWorkout 
+        workoutPlan={activeGuidedWorkout}
+        onComplete={completeGuidedWorkout}
+        onClose={() => setActiveGuidedWorkout(null)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6 animate-slide-up">
       {/* Motivational Messages */}
@@ -56,6 +88,77 @@ export function Dashboard() {
         <h1 className="text-3xl font-bold mb-2">Bentornato nel tuo Fitness Journey! 💪</h1>
         <p className="text-primary-foreground/90">Ecco un riepilogo dei tuoi progressi</p>
       </div>
+
+      {/* Today's Workout Plan */}
+      {todayWorkoutPlan ? (
+        <Card className="gradient-card border-0 shadow-fitness-lg animate-pulse-subtle">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold flex items-center">
+              <Target className="h-6 w-6 mr-3 text-primary" />
+              Allenamento di Oggi
+            </CardTitle>
+            <p className="text-muted-foreground">
+              {new Date().toLocaleDateString('it-IT', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </p>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            <div className="bg-accent/20 rounded-lg p-4">
+              <h3 className="text-xl font-semibold mb-4">{todayWorkoutPlan.name}</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {todayWorkoutPlan.exercises.slice(0, 4).map((exercise, index) => (
+                  <div key={exercise.id} className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
+                    <div>
+                      <p className="font-medium">{exercise.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {exercise.targetSets} serie × {exercise.targetReps} reps
+                        {exercise.targetWeight && ` @ ${exercise.targetWeight}kg`}
+                      </p>
+                    </div>
+                    {exercise.restTime && (
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {Math.floor(exercise.restTime / 60)}:{(exercise.restTime % 60).toString().padStart(2, '0')}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                
+                {todayWorkoutPlan.exercises.length > 4 && (
+                  <div className="col-span-full text-center text-muted-foreground">
+                    ... e altri {todayWorkoutPlan.exercises.length - 4} esercizi
+                  </div>
+                )}
+              </div>
+
+              <Button 
+                onClick={() => startGuidedWorkout(todayWorkoutPlan)}
+                size="lg"
+                className="w-full gradient-primary text-primary-foreground text-lg py-6"
+              >
+                <PlayCircle className="h-6 w-6 mr-3" />
+                Inizia l'Allenamento
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="gradient-card border-0 shadow-fitness">
+          <CardContent className="p-6 text-center">
+            <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-xl font-semibold mb-2">Nessun allenamento oggi</h3>
+            <p className="text-muted-foreground mb-4">
+              Non hai una scheda programmata per oggi. Vai alla sezione "Schede" per crearne una!
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
