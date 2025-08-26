@@ -254,12 +254,21 @@ export function GuidedWorkout({ workoutPlan, onComplete, onClose }: GuidedWorkou
             {/* Exercise Actions */}
             <div className="flex gap-4">
               {currentSetIndex >= currentPlannedExercise.targetSets && (
-                <Button 
-                  onClick={completeExercise} 
-                  className="gradient-primary text-primary-foreground flex-1"
-                >
-                  {currentExerciseIndex < totalExercises - 1 ? 'Prossimo Esercizio' : 'Completa Allenamento'}
-                </Button>
+                <>
+                  <Button 
+                    onClick={completeExercise} 
+                    className="gradient-primary text-primary-foreground flex-1"
+                  >
+                    {currentExerciseIndex < totalExercises - 1 ? 'Prossimo Esercizio' : 'Completa Allenamento'}
+                  </Button>
+                  <Button 
+                    onClick={() => setCurrentSetIndex(prev => prev - 1)} 
+                    variant="outline"
+                    className="px-6"
+                  >
+                    Aggiungi Serie
+                  </Button>
+                </>
               )}
             </div>
           </CardContent>
