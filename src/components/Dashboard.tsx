@@ -79,25 +79,42 @@ export function Dashboard() {
   }
 
   return (
-    <div className="space-y-6 animate-slide-up">
+    <div className="space-y-8 animate-stagger">
       {/* Motivational Messages */}
-      <MotivationalMessages />
-
-      {/* Header */}
-      <div className="gradient-hero rounded-xl p-6 text-white">
-        <h1 className="text-3xl font-bold mb-2">Bentornato nel tuo Fitness Journey! 💪</h1>
-        <p className="text-primary-foreground/90">Ecco un riepilogo dei tuoi progressi</p>
+      <div className="animate-slide-up">
+        <MotivationalMessages />
       </div>
 
-      {/* Today's Workout Plan */}
+      {/* Enhanced Header */}
+      <div className="gradient-animated rounded-3xl p-8 text-white shadow-glow-lg animate-scale-in">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-4xl font-black mb-2 tracking-tight">
+            Ciao Champion! 🏆
+          </h1>
+          <div className="glass p-3 rounded-2xl">
+            <Trophy className="h-8 w-8 text-warning animate-bounce-in" />
+          </div>
+        </div>
+        <p className="text-primary-foreground/90 text-lg font-medium">
+          Raggiungi i tuoi obiettivi con stile e determinazione
+        </p>
+        <div className="mt-4 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium">Pronto per l'allenamento</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Today's Workout Plan - Enhanced */}
       {todayWorkoutPlan ? (
-        <Card className="gradient-card border-0 shadow-fitness-lg animate-pulse-subtle">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center">
-              <Target className="h-6 w-6 mr-3 text-primary" />
+        <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift neon-border">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-3xl font-black flex items-center text-primary">
+              <Target className="h-8 w-8 mr-4 animate-bounce-in" />
               Allenamento di Oggi
             </CardTitle>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-lg font-medium">
               {new Date().toLocaleDateString('it-IT', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -107,32 +124,42 @@ export function Dashboard() {
             </p>
           </CardHeader>
           
-          <CardContent className="space-y-6">
-            <div className="bg-accent/20 rounded-lg p-4">
-              <h3 className="text-xl font-semibold mb-4">{todayWorkoutPlan.name}</h3>
+          <CardContent className="space-y-8">
+            <div className="gradient-card rounded-2xl p-6 shadow-fitness-lg">
+              <h3 className="text-2xl font-bold mb-6 text-primary">{todayWorkoutPlan.name}</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 {todayWorkoutPlan.exercises.slice(0, 4).map((exercise, index) => (
-                  <div key={exercise.id} className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                    <div>
-                      <p className="font-medium">{exercise.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {exercise.targetSets} serie × {exercise.targetReps} reps
-                        {exercise.targetWeight && ` @ ${exercise.targetWeight}kg`}
-                      </p>
-                    </div>
-                    {exercise.restTime && (
-                      <div className="flex items-center text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {Math.floor(exercise.restTime / 60)}:{(exercise.restTime % 60).toString().padStart(2, '0')}
+                  <div 
+                    key={exercise.id} 
+                    className="glass p-4 rounded-xl hover-glow transition-all animate-scale-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-bold text-foreground text-lg">{exercise.name}</p>
+                        <p className="text-muted-foreground font-medium">
+                          {exercise.targetSets} serie × {exercise.targetReps} reps
+                          {exercise.targetWeight && ` @ ${exercise.targetWeight}kg`}
+                        </p>
                       </div>
-                    )}
+                      {exercise.restTime && (
+                        <div className="glass p-2 rounded-lg flex items-center text-sm font-medium text-primary">
+                          <Clock className="h-4 w-4 mr-1" />
+                          {Math.floor(exercise.restTime / 60)}:{(exercise.restTime % 60).toString().padStart(2, '0')}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
                 
                 {todayWorkoutPlan.exercises.length > 4 && (
-                  <div className="col-span-full text-center text-muted-foreground">
-                    ... e altri {todayWorkoutPlan.exercises.length - 4} esercizi
+                  <div className="col-span-full text-center">
+                    <div className="glass p-4 rounded-xl">
+                      <p className="text-muted-foreground font-semibold text-lg">
+                        ... e altri {todayWorkoutPlan.exercises.length - 4} esercizi straordinari! 💪
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -140,144 +167,201 @@ export function Dashboard() {
               <Button 
                 onClick={() => startGuidedWorkout(todayWorkoutPlan)}
                 size="lg"
-                className="w-full gradient-primary text-primary-foreground text-lg py-6"
+                className="w-full gradient-primary text-primary-foreground text-xl font-bold py-8 rounded-2xl shadow-glow-lg hover:scale-105 transition-all neon-glow animate-glow-pulse"
               >
-                <PlayCircle className="h-6 w-6 mr-3" />
-                Inizia l'Allenamento
+                <PlayCircle className="h-8 w-8 mr-4 animate-bounce-in" />
+                🚀 Inizia l'Allenamento Epico
               </Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <Card className="gradient-card border-0 shadow-fitness">
-          <CardContent className="p-6 text-center">
-            <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-xl font-semibold mb-2">Nessun allenamento oggi</h3>
-            <p className="text-muted-foreground mb-4">
-              Non hai una scheda programmata per oggi. Vai alla sezione "Schede" per crearne una!
+        <Card className="glass-strong border-0 shadow-fitness-lg hover-lift animate-slide-up">
+          <CardContent className="p-8 text-center">
+            <div className="animate-bounce-in">
+              <Target className="h-16 w-16 mx-auto mb-6 text-primary" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4 text-foreground">Giornata Libera! 🎯</h3>
+            <p className="text-muted-foreground mb-6 text-lg">
+              Oggi è il momento perfetto per creare una nuova scheda di allenamento!
             </p>
+            <div className="glass p-4 rounded-xl">
+              <p className="text-sm font-medium text-primary">
+                💡 Vai alla sezione "Schede" per iniziare la tua trasformazione
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="gradient-card border-0 shadow-fitness transition-smooth hover:shadow-fitness-lg">
+      {/* Enhanced Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-stagger">
+        <Card className="glass-strong border-0 shadow-fitness-lg hover-lift animate-scale-in neon-border">
           <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Allenamenti Totali</p>
-                <p className="text-2xl font-bold text-foreground">{totalWorkouts}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="gradient-primary p-3 rounded-2xl">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Allenamenti</p>
+                  <p className="text-3xl font-black text-foreground">{totalWorkouts}</p>
+                </div>
               </div>
+              <div className="text-success animate-pulse-soft">📈</div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="gradient-card border-0 shadow-fitness transition-smooth hover:shadow-fitness-lg">
+        <Card className="glass-strong border-0 shadow-fitness-lg hover-lift animate-scale-in neon-border">
           <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5 text-secondary" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Questa Settimana</p>
-                <p className="text-2xl font-bold text-foreground">{thisWeekWorkouts}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="gradient-secondary p-3 rounded-2xl">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Settimana</p>
+                  <p className="text-3xl font-black text-foreground">{thisWeekWorkouts}</p>
+                </div>
               </div>
+              <div className="text-secondary animate-pulse-soft">⚡</div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="gradient-card border-0 shadow-fitness transition-smooth hover:shadow-fitness-lg">
+        <Card className="glass-strong border-0 shadow-fitness-lg hover-lift animate-scale-in neon-border">
           <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Timer className="h-5 w-5 text-accent-foreground" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Durata Media</p>
-                <p className="text-2xl font-bold text-foreground">{Math.round(avgDuration)}min</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="gradient-success p-3 rounded-2xl">
+                  <Timer className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Durata Media</p>
+                  <p className="text-3xl font-black text-foreground">{Math.round(avgDuration)}min</p>
+                </div>
               </div>
+              <div className="text-warning animate-pulse-soft">⏱️</div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="gradient-card border-0 shadow-fitness transition-smooth hover:shadow-fitness-lg">
+        <Card className="glass-strong border-0 shadow-fitness-lg hover-lift animate-scale-in neon-border pulse-success">
           <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Trophy className="h-5 w-5 text-warning" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Personal Best</p>
-                <p className="text-2xl font-bold text-foreground">{personalBests.length}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="gradient-primary p-3 rounded-2xl animate-glow-pulse">
+                  <Trophy className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Records</p>
+                  <p className="text-3xl font-black text-foreground">{personalBests.length}</p>
+                </div>
               </div>
+              <div className="text-warning animate-bounce-in">🏆</div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Progress Chart */}
-      <Card className="gradient-card border-0 shadow-fitness">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-foreground">Progressi nel Tempo</CardTitle>
+      {/* Enhanced Progress Chart */}
+      <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift">
+        <CardHeader className="pb-6">
+          <CardTitle className="text-2xl font-bold flex items-center text-primary">
+            <TrendingUp className="h-7 w-7 mr-3 animate-bounce-in" />
+            La Tua Evoluzione nel Tempo
+          </CardTitle>
+          <p className="text-muted-foreground font-medium">Traccia i tuoi progressi e celebra ogni miglioramento</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {recentProgress.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={recentProgress}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="volume" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={3}
-                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="glass p-4 rounded-xl">
+              <ResponsiveContainer width="100%" height={350}>
+                <LineChart data={recentProgress}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.3)" />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={13}
+                    fontWeight={600}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={13}
+                    fontWeight={600}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--primary))',
+                      borderRadius: '12px',
+                      boxShadow: 'var(--shadow-glow)',
+                      fontSize: '14px',
+                      fontWeight: '600'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="volume" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={4}
+                    dot={{ fill: 'hsl(var(--primary))', strokeWidth: 3, r: 6 }}
+                    activeDot={{ r: 8, stroke: 'hsl(var(--primary))', strokeWidth: 3, fill: 'white' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-64 text-center">
-              <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Inizia ad allenarti per vedere i tuoi progressi!</p>
+            <div className="flex flex-col items-center justify-center h-80 text-center glass p-8 rounded-xl">
+              <div className="animate-bounce-in">
+                <TrendingUp className="h-16 w-16 text-primary mb-6" />
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-foreground">Il Tuo Viaggio Inizia Ora! 🚀</h3>
+              <p className="text-muted-foreground font-medium">
+                Inizia ad allenarti per vedere grafici spettacolari dei tuoi progressi!
+              </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Recent Personal Bests */}
+      {/* Enhanced Personal Bests */}
       {personalBests.length > 0 && (
-        <Card className="gradient-card border-0 shadow-fitness">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold flex items-center">
-              <Trophy className="h-5 w-5 mr-2 text-warning" />
-              Personal Best Recenti
+        <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-2xl font-bold flex items-center">
+              <div className="gradient-primary p-2 rounded-xl mr-3 animate-glow-pulse">
+                <Trophy className="h-7 w-7 text-white" />
+              </div>
+              I Tuoi Record Leggendari
             </CardTitle>
+            <p className="text-muted-foreground font-medium">Celebriamo ogni traguardo raggiunto! 🎉</p>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="p-6">
+            <div className="space-y-4">
               {personalBests.slice(-5).reverse().map((pb, index) => (
-                <div key={index} className="flex justify-between items-center p-3 bg-accent/20 rounded-lg">
-                  <div>
-                    <p className="font-medium text-foreground">{pb.exerciseName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(pb.date).toLocaleDateString('it-IT')}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-primary">{pb.weight}kg</p>
-                    <p className="text-sm text-muted-foreground">{pb.reps} reps</p>
+                <div 
+                  key={index} 
+                  className="glass p-4 rounded-xl hover-glow transition-all animate-scale-in neon-border"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <div className="gradient-success p-2 rounded-lg">
+                        <Trophy className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-foreground text-lg">{pb.exerciseName}</p>
+                        <p className="text-sm text-muted-foreground font-medium">
+                          {new Date(pb.date).toLocaleDateString('it-IT')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-2xl text-primary">{pb.weight}kg</p>
+                      <p className="text-sm text-muted-foreground font-bold">{pb.reps} reps</p>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -286,25 +370,31 @@ export function Dashboard() {
         </Card>
       )}
 
-      {/* Workout History */}
+      {/* Enhanced Workout History */}
       {workouts.length > 0 && (
-        <Card className="gradient-card border-0 shadow-fitness">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold flex items-center">
-              <Calendar className="h-5 w-5 mr-2 text-primary" />
-              Storico Allenamenti
+        <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-2xl font-bold flex items-center text-primary">
+              <Calendar className="h-7 w-7 mr-3 animate-bounce-in" />
+              La Tua Storia di Successi
             </CardTitle>
+            <p className="text-muted-foreground font-medium">Ogni allenamento è un passo verso la grandezza</p>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+          <CardContent className="p-6">
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
               {workouts
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                .map((workout) => (
-                  <WorkoutHistoryCard 
+                .map((workout, index) => (
+                  <div 
                     key={workout.id}
-                    workout={workout}
-                    onDelete={handleDeleteWorkout}
-                  />
+                    className="animate-scale-in"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <WorkoutHistoryCard 
+                      workout={workout}
+                      onDelete={handleDeleteWorkout}
+                    />
+                  </div>
                 ))
               }
             </div>
