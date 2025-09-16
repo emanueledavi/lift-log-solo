@@ -10,6 +10,7 @@ import { Plus, Trash2, Save, Calendar, Target, Edit3, Copy } from "lucide-react"
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { ExerciseAutocomplete } from "./ExerciseAutocomplete";
 
 const DAYS_OF_WEEK = [
   { value: 0, label: 'Domenica' },
@@ -347,10 +348,10 @@ export function WorkoutPlansComponent() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Nome Esercizio</Label>
-                          <Input
+                          <ExerciseAutocomplete
                             placeholder="es. Panca piana"
                             value={exercise.name}
-                            onChange={(e) => updateExerciseInPlan(exercise.id, 'name', e.target.value)}
+                            onChange={(value) => updateExerciseInPlan(exercise.id, 'name', value)}
                           />
                         </div>
 
