@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { exerciseDatabase } from "./ExerciseDatabase";
 import { 
   Search, 
   Dumbbell, 
@@ -31,65 +32,6 @@ interface Exercise {
   isCustom?: boolean;
 }
 
-const exerciseDatabase: Exercise[] = [
-  {
-    id: "squat",
-    name: "Squat",
-    category: "strength",
-    targetMuscles: ["Quadricipiti", "Glutei", "Core"],
-    difficulty: "beginner",
-    equipment: ["Corpo libero"],
-    description: "Esercizio fondamentale per allenare la parte inferiore del corpo.",
-    instructions: ["Posizionati con i piedi leggermente più larghi delle spalle"],
-    tips: ["Mantieni le ginocchia allineate con le punte dei piedi"]
-  },
-  {
-    id: "push-up",
-    name: "Push-up",
-    category: "strength",
-    targetMuscles: ["Pettorali", "Tricipiti", "Spalle", "Core"],
-    difficulty: "beginner",
-    equipment: ["Corpo libero"],
-    description: "Esercizio completo per la parte superiore del corpo.",
-    instructions: ["Posizionati in posizione di plank con le mani sotto le spalle"],
-    tips: ["Se troppo difficile, inizia dalle ginocchia"]
-  },
-  {
-    id: "deadlift",
-    name: "Stacco da Terra",
-    category: "strength",
-    targetMuscles: ["Glutei", "Femorali", "Schiena", "Core"],
-    difficulty: "intermediate",
-    equipment: ["Bilanciere", "Pesi"],
-    description: "Movimento fondamentale per sviluppare forza posteriore.",
-    instructions: ["Posizionati con i piedi sotto la barra"],
-    tips: ["Inizia con peso leggero per apprendere la tecnica"]
-  },
-  {
-    id: "running",
-    name: "Corsa",
-    category: "cardio",
-    targetMuscles: ["Gambe", "Core", "Sistema cardiovascolare"],
-    difficulty: "beginner",
-    equipment: ["Corpo libero"],
-    description: "Attività cardiovascolare completa per migliorare resistenza.",
-    instructions: ["Inizia con un riscaldamento di 5-10 minuti di camminata"],
-    tips: ["Inizia gradualmente se sei principiante"],
-    duration: "20-60 minuti"
-  },
-  {
-    id: "burpees",
-    name: "Burpees",
-    category: "cardio",
-    targetMuscles: ["Tutto il corpo", "Sistema cardiovascolare"],
-    difficulty: "advanced",
-    equipment: ["Corpo libero"],
-    description: "Esercizio ad alta intensità che combina forza e cardio.",
-    instructions: ["Inizia in posizione eretta"],
-    tips: ["Mantieni un ritmo costante"]
-  }
-];
-
 interface ExerciseSelectorProps {
   onExerciseSelect: (exercise: Exercise) => void;
   exerciseType?: 'strength' | 'cardio';
@@ -101,7 +43,7 @@ export function ExerciseSelector({ onExerciseSelect, exerciseType }: ExerciseSel
   const [searchTerm, setSearchTerm] = useState("");
   const [customExerciseName, setCustomExerciseName] = useState("");
 
-  // Combine default exercises with custom exercises
+  // Combine exercises from database with custom exercises
   const allExercises = [...exerciseDatabase, ...customExercises];
 
   // Filter exercises based on search term and exercise type if specified

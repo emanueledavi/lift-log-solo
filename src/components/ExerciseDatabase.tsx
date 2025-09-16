@@ -1990,6 +1990,9 @@ const exerciseDatabase: Exercise[] = [
   }
 ];
 
+// Export del database per l'utilizzo in altri componenti
+export { exerciseDatabase };
+
 export function ExerciseDatabase() {
   const [customExercises] = useLocalStorage<Exercise[]>("customExercises", []);
   const [searchTerm, setSearchTerm] = useState("");
