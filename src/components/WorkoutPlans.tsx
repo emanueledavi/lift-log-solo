@@ -174,6 +174,14 @@ export function WorkoutPlansComponent() {
                         >
                           <Edit3 className="h-3 w-3" />
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deletePlan(plan.id)}
+                          className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground">
