@@ -8,6 +8,8 @@ import { CalorieCalculator } from "./CalorieCalculator";
 import { RestTimer } from "./RestTimer";
 import { ExerciseDatabase } from "./ExerciseDatabase";
 import { Achievements } from "./Achievements";
+import { Goals } from "./Goals";
+import { ThemeToggle } from "./ThemeToggle";
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -17,7 +19,8 @@ import {
   Timer,
   Dumbbell,
   Database,
-  Trophy
+  Trophy,
+  Crosshair
 } from "lucide-react";
 
 export function FitnessApp() {
@@ -26,49 +29,55 @@ export function FitnessApp() {
   const tabs = [
     {
       id: "dashboard",
-      label: "Dashboard",
+      label: "Centro di Controllo",
       icon: LayoutDashboard,
       component: Dashboard
     },
     {
       id: "workout-log",
-      label: "Diario",
+      label: "Diario Allenamenti",
       icon: BookOpen,
       component: WorkoutLog
     },
     {
       id: "exercises",
-      label: "Esercizi",
+      label: "Database Esercizi",
       icon: Database,
       component: ExerciseDatabase
     },
     {
       id: "workout-plans",
-      label: "Schede",
+      label: "Le Tue Schede",
       icon: Target,
       component: WorkoutPlansComponent
     },
     {
+      id: "goals",
+      label: "I Tuoi Obiettivi",
+      icon: Crosshair,
+      component: Goals
+    },
+    {
       id: "progress",
-      label: "Progressi",
+      label: "Analisi Progressi",
       icon: TrendingUp,
       component: Progress
     },
     {
       id: "achievements",
-      label: "Traguardi",
+      label: "Hall of Fame",
       icon: Trophy,
       component: Achievements
     },
     {
       id: "calories",
-      label: "Calorie",
+      label: "Calc. Calorie",
       icon: Calculator,
       component: CalorieCalculator
     },
     {
       id: "timer",
-      label: "Timer",
+      label: "Timer Riposo",
       icon: Timer,
       component: RestTimer
     }
@@ -92,13 +101,16 @@ export function FitnessApp() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground tracking-tight">FitTracker Pro</h1>
-                <p className="text-sm text-muted-foreground hidden sm:block">La tua palestra digitale personalizzata</p>
+                <p className="text-sm text-muted-foreground hidden sm:block">La tua palestra digitale intelligente</p>
               </div>
             </div>
-            <div className="glass p-2 rounded-xl">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                <span className="text-success">Online</span>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <div className="glass p-2 rounded-xl">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                  <span className="text-success">Online</span>
+                </div>
               </div>
             </div>
           </div>
@@ -110,7 +122,7 @@ export function FitnessApp() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           {/* Modern Navigation Tabs */}
           <div className="glass-strong p-2 rounded-2xl shadow-fitness-lg">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 h-auto p-0 bg-transparent gap-1">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 h-auto p-0 bg-transparent gap-1">
               {tabs.map((tab, index) => (
                 <TabsTrigger
                   key={tab.id}
