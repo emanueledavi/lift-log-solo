@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
+import { AppSidebar } from "./AppSidebar";
 import { Dashboard } from "./Dashboard";
 import { WorkoutLog } from "./WorkoutLog";
 import { WorkoutPlansComponent } from "./WorkoutPlans";
@@ -140,105 +141,78 @@ export function FitnessApp() {
   ];
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-pulse-soft"></div>
-      </div>
+    <SidebarProvider defaultOpen={false}>
+      <div className="min-h-screen w-full flex bg-background relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-pulse-soft"></div>
+        </div>
 
-      {/* Enhanced Header */}
-      <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="gradient-primary p-3 rounded-2xl shadow-glow animate-glow-pulse">
-                <Dumbbell className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground tracking-tight">FitTracker Pro</h1>
-                <p className="text-sm text-muted-foreground hidden sm:block">La tua palestra digitale intelligente</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <div className="glass p-2 rounded-xl">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                  <span className="text-success">{user?.email}</span>
+        {/* Mobile-First Sidebar */}
+        <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Enhanced Mobile Header */}
+          <header className="sticky top-0 z-50 glass-strong border-b border-border/50 px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="lg:hidden p-2">
+                  <Menu className="h-5 w-5" />
+                </SidebarTrigger>
+                <div className="flex items-center gap-2">
+                  <div className="gradient-primary p-2 rounded-xl shadow-glow">
+                    <Dumbbell className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="hidden sm:block">
+                    <h1 className="text-lg font-bold text-foreground tracking-tight">FitTracker Pro</h1>
+                    <p className="text-xs text-muted-foreground">La tua palestra digitale</p>
+                  </div>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSignOut}
-                className="gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Esci
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content with Enhanced Layout */}
-      <main className="container mx-auto px-3 py-6 pb-24 relative z-10">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          {/* Modern Navigation Tabs */}
-          <div className="glass-strong p-2 rounded-2xl shadow-fitness-lg">
-            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 h-auto p-0 bg-transparent gap-1">
-              {tabs.map((tab, index) => (
-                <TabsTrigger
-                  key={tab.id}
-                  value={tab.id}
-                  className="flex flex-col items-center gap-2 py-4 px-3 rounded-xl transition-all duration-300 
-                           data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
-                           data-[state=active]:shadow-glow data-[state=active]:scale-105
-                           hover:bg-accent hover:scale-102 hover:shadow-md
-                           min-h-[70px] touch-manipulation group animate-scale-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+              
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <div className="hidden sm:flex glass p-2 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                    <span className="text-success text-xs truncate max-w-24">{user?.email}</span>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="gap-2 h-9"
                 >
-                  <tab.icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-semibold leading-tight text-center">{tab.label}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-
-          {/* Enhanced Tab Content */}
-          <div className="relative">
-            {tabs.map((tab, index) => (
-              <TabsContent 
-                key={tab.id} 
-                value={tab.id} 
-                className="space-y-6 animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                <tab.component />
-              </TabsContent>
-            ))}
-          </div>
-        </Tabs>
-      </main>
-
-      {/* Enhanced Footer */}
-      <footer className="glass-strong border-t border-border/50 mt-12 relative z-10">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <div className="gradient-primary p-2 rounded-lg">
-              <Dumbbell className="h-4 w-4 text-white" />
+                  <LogOut className="h-4 w-4" />
+                  <span className="hidden sm:inline">Esci</span>
+                </Button>
+              </div>
             </div>
-            <p className="text-lg font-bold text-foreground">FitTracker Pro</p>
+          </header>
+
+          {/* Mobile Content */}
+          <main className="flex-1 px-4 py-4 pb-20 relative z-10 overflow-y-auto">
+            <div className="space-y-4">
+              {/* Active Tab Content */}
+              <div className="animate-fade-in">
+                {tabs.find(tab => tab.id === activeTab)?.component()}
+              </div>
+            </div>
+          </main>
+
+          {/* Mobile Bottom Navigation - Hidden on larger screens */}
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-border/50 px-4 py-2">
+            <div className="flex items-center justify-center">
+              <SidebarTrigger className="p-3 rounded-full bg-primary text-primary-foreground shadow-lg">
+                <Menu className="h-5 w-5" />
+              </SidebarTrigger>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground mb-2">
-            La tua app fitness intelligente e moderna
-          </p>
-          <p className="text-xs text-muted-foreground">
-            🔒 Tutti i dati sono crittografati e salvati localmente
-          </p>
         </div>
-      </footer>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }
