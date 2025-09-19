@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import { Dashboard } from "./Dashboard";
 import { WorkoutLog } from "./WorkoutLog";
 import { WorkoutPlansComponent } from "./WorkoutPlans";
@@ -23,8 +26,61 @@ import {
   Crosshair
 } from "lucide-react";
 
+interface User {
+  email: string;
+  loggedIn: boolean;
+}
+
 export function FitnessApp() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check for existing user session
+    const checkAuth = () => {
+      const stored = localStorage.getItem('fitapp_user');
+      if (stored) {
+        try {
+          const userData = JSON.parse(stored);
+          if (userData.loggedIn) {
+            setUser(userData);
+          } else {
+            navigate("/auth");
+          }
+        } catch (error) {
+          navigate("/auth");
+        }
+      } else {
+        navigate("/auth");
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('fitapp_user');
+    setUser(null);
+    navigate("/auth");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Caricamento...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to auth
+  }
 
   const tabs = [
     {
@@ -109,9 +165,18 @@ export function FitnessApp() {
               <div className="glass p-2 rounded-xl">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                  <span className="text-success">Online</span>
+                  <span className="text-success">{user?.email}</span>
                 </div>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Esci
+              </Button>
             </div>
           </div>
         </div>
