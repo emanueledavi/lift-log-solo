@@ -198,7 +198,10 @@ export function FitnessApp() {
             <div className="space-y-4">
               {/* Active Tab Content */}
               <div className="animate-fade-in">
-                {tabs.find(tab => tab.id === activeTab)?.component()}
+                {(() => {
+                  const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;
+                  return ActiveComponent ? <ActiveComponent /> : null;
+                })()}
               </div>
             </div>
           </main>
