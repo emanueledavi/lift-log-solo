@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppHeader } from "./AppHeader";
-import { BottomNavigation } from "./BottomNavigation";
 import { TabContent } from "./TabContent";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -179,21 +178,20 @@ export function FitnessApp() {
         </div>
 
         {/* Header */}
-        <AppHeader user={user} onSignOut={handleSignOut} />
-
-        {/* Main Content */}
-        <main className="flex-1 px-4 py-4 pb-32 relative z-10 overflow-y-auto">
-          <div className="max-w-7xl mx-auto">
-            <TabContent activeTab={activeTab} />
-          </div>
-        </main>
-
-        {/* Bottom Navigation */}
-        <BottomNavigation 
+        <AppHeader 
+          user={user} 
+          onSignOut={handleSignOut} 
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={handleTabChange}
         />
+
+        {/* Main Content */}
+        <main className="flex-1 px-4 py-4 pb-8 relative z-10 overflow-y-auto">
+          <div className="max-w-7xl mx-auto">
+            <TabContent activeTab={activeTab} />
+          </div>
+        </main>
       </div>
     </ErrorBoundary>
   );
