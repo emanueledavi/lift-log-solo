@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, Dumbbell, Menu } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -31,6 +32,12 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: AppHeaderProps) {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleTabClick = (tabId: string) => {
+    onTabChange(tabId);
+    setIsDrawerOpen(false); // Close the drawer
+  };
   return (
     <header className="sticky top-0 z-50 glass-strong border-b border-border/50 px-4 py-3 safe-area-top">
       <div className="flex items-center justify-between gap-3">
@@ -64,7 +71,7 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
           </div>
           
           {/* Hamburger Menu */}
-          <Drawer>
+          <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <DrawerTrigger asChild>
               <Button
                 variant="ghost"
@@ -93,7 +100,7 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
                         key={tab.id}
                         variant={isActive ? "default" : "outline"}
                         size="lg"
-                        onClick={() => onTabChange(tab.id)}
+                        onClick={() => handleTabClick(tab.id)}
                         className={`
                           flex flex-col gap-3 h-auto py-6 px-4 text-sm font-bold
                           transition-all duration-300 hover:scale-105
