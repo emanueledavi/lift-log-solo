@@ -22,11 +22,11 @@ export function AppHeader({ user, onSignOut }: AppHeaderProps) {
             <Dumbbell className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-foreground tracking-tight">
-              FitTracker Pro
+            <h1 className="text-2xl font-black text-foreground tracking-tight">
+              FitTracker Pro 💪
             </h1>
-            <p className="text-xs text-muted-foreground hidden sm:block">
-              La tua palestra digitale
+            <p className="text-sm text-muted-foreground font-bold hidden sm:block">
+              Your digital gym bestie ✨
             </p>
           </div>
         </div>
@@ -53,7 +53,7 @@ export function AppHeader({ user, onSignOut }: AppHeaderProps) {
             className="gap-2 h-9 hover:bg-destructive/10 hover:text-destructive transition-colors"
           >
             <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Esci</span>
+            <span className="hidden sm:inline">Sign Out</span>
           </Button>
         </div>
       </div>

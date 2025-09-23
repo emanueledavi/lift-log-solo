@@ -86,22 +86,43 @@ export function Dashboard() {
       </div>
 
       {/* Enhanced Header */}
-      <div className="gradient-animated rounded-3xl p-8 text-white shadow-glow-lg animate-scale-in">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-4xl font-black mb-2 tracking-tight">
-            Ciao Champion! 🏆
-          </h1>
-          <div className="glass p-3 rounded-2xl">
-            <Trophy className="h-8 w-8 text-warning animate-bounce-in" />
+      <div className="relative overflow-hidden rounded-3xl p-8 text-white shadow-glow-lg animate-scale-in">
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-90"
+          style={{
+            background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%)',
+            backgroundSize: '400% 400%',
+            animation: 'gradientShift 6s ease infinite'
+          }}
+        ></div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-5xl font-black mb-2 tracking-tight">
+                Hey Beast! 💪
+              </h1>
+              <p className="text-xl font-bold opacity-90">
+                Time to level up! 🚀
+              </p>
+            </div>
+            <div className="glass p-4 rounded-3xl animate-bounce-in">
+              <Trophy className="h-10 w-10 text-warning animate-glow-pulse" />
+            </div>
           </div>
-        </div>
-        <p className="text-primary-foreground/90 text-lg font-medium">
-          Raggiungi i tuoi obiettivi con stile e determinazione
-        </p>
-        <div className="mt-4 flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium">Pronto per l'allenamento</span>
+          
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="glass p-4 rounded-2xl">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 bg-success rounded-full animate-pulse"></div>
+                <span className="font-bold text-lg">Ready to crush it!</span>
+              </div>
+            </div>
+            <div className="glass p-4 rounded-2xl">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 bg-warning rounded-full animate-bounce"></div>
+                <span className="font-bold text-lg">Beast mode: ON</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -110,17 +131,21 @@ export function Dashboard() {
       {todayWorkoutPlan ? (
         <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift neon-border">
           <CardHeader className="pb-4">
-            <CardTitle className="text-3xl font-black flex items-center text-primary">
-              <Target className="h-8 w-8 mr-4 animate-bounce-in" />
-              Allenamento di Oggi
+            <CardTitle className="text-4xl font-black flex items-center justify-between text-primary">
+              <div className="flex items-center">
+                <div className="gradient-primary p-3 rounded-2xl mr-4 animate-glow-pulse">
+                  <Target className="h-8 w-8 text-white animate-bounce-in" />
+                </div>
+                Today's Mission 🎯
+              </div>
+              <div className="text-2xl">🔥</div>
             </CardTitle>
-            <p className="text-muted-foreground text-lg font-medium">
+            <p className="text-muted-foreground text-xl font-bold">
               {new Date().toLocaleDateString('it-IT', { 
                 weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
+                day: 'numeric',
+                month: 'long'
+              })} - Time to shine!
             </p>
           </CardHeader>
           
@@ -166,11 +191,19 @@ export function Dashboard() {
 
               <Button 
                 onClick={() => startGuidedWorkout(todayWorkoutPlan)}
-                size="lg"
-                className="w-full gradient-primary text-primary-foreground text-xl font-bold py-8 rounded-2xl shadow-glow-lg hover:scale-105 transition-all neon-glow animate-glow-pulse"
+                size="xl"
+                className="w-full relative overflow-hidden text-2xl font-black py-8 rounded-3xl shadow-glow-lg hover:scale-105 transition-all group"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientShift 3s ease infinite'
+                }}
               >
-                <PlayCircle className="h-8 w-8 mr-4 animate-bounce-in" />
-                🚀 Inizia l'Allenamento Epico
+                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl"></div>
+                <div className="relative z-10 flex items-center justify-center gap-4">
+                  <PlayCircle className="h-10 w-10 animate-bounce-in" />
+                  <span>LET'S GOOO! 🚀💥</span>
+                </div>
               </Button>
             </div>
           </CardContent>
@@ -181,13 +214,13 @@ export function Dashboard() {
             <div className="animate-bounce-in">
               <Target className="h-16 w-16 mx-auto mb-6 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-foreground">Giornata Libera! 🎯</h3>
-            <p className="text-muted-foreground mb-6 text-lg">
-              Oggi è il momento perfetto per creare una nuova scheda di allenamento!
+            <h3 className="text-3xl font-black mb-4 text-foreground">Rest Day Vibes! 😎</h3>
+            <p className="text-muted-foreground mb-6 text-xl font-bold">
+              Perfect time to plan your next epic workout session!
             </p>
-            <div className="glass p-4 rounded-xl">
-              <p className="text-sm font-medium text-primary">
-                💡 Vai alla sezione "Schede" per iniziare la tua trasformazione
+            <div className="glass p-6 rounded-2xl neon-border">
+              <p className="text-lg font-bold text-primary">
+                💡 Hit up "Workout Plans" to create your transformation blueprint! 🎯
               </p>
             </div>
           </CardContent>
@@ -204,8 +237,8 @@ export function Dashboard() {
                   <Calendar className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Allenamenti</p>
-                  <p className="text-3xl font-black text-foreground">{totalWorkouts}</p>
+                  <p className="text-sm font-black text-muted-foreground uppercase tracking-wider">Total Workouts</p>
+                  <p className="text-4xl font-black text-foreground">{totalWorkouts}</p>
                 </div>
               </div>
               <div className="text-success animate-pulse-soft">📈</div>
@@ -221,8 +254,8 @@ export function Dashboard() {
                   <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Settimana</p>
-                  <p className="text-3xl font-black text-foreground">{thisWeekWorkouts}</p>
+                  <p className="text-sm font-black text-muted-foreground uppercase tracking-wider">This Week</p>
+                  <p className="text-4xl font-black text-foreground">{thisWeekWorkouts}</p>
                 </div>
               </div>
               <div className="text-secondary animate-pulse-soft">⚡</div>
@@ -238,8 +271,8 @@ export function Dashboard() {
                   <Timer className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Durata Media</p>
-                  <p className="text-3xl font-black text-foreground">{Math.round(avgDuration)}min</p>
+                  <p className="text-sm font-black text-muted-foreground uppercase tracking-wider">Avg Time</p>
+                  <p className="text-4xl font-black text-foreground">{Math.round(avgDuration)}min</p>
                 </div>
               </div>
               <div className="text-warning animate-pulse-soft">⏱️</div>
@@ -255,8 +288,8 @@ export function Dashboard() {
                   <Trophy className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">Records</p>
-                  <p className="text-3xl font-black text-foreground">{personalBests.length}</p>
+                  <p className="text-sm font-black text-muted-foreground uppercase tracking-wider">PRs</p>
+                  <p className="text-4xl font-black text-foreground">{personalBests.length}</p>
                 </div>
               </div>
               <div className="text-warning animate-bounce-in">🏆</div>
@@ -268,11 +301,13 @@ export function Dashboard() {
       {/* Enhanced Progress Chart */}
       <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift">
         <CardHeader className="pb-6">
-          <CardTitle className="text-2xl font-bold flex items-center text-primary">
-            <TrendingUp className="h-7 w-7 mr-3 animate-bounce-in" />
-            La Tua Evoluzione nel Tempo
+          <CardTitle className="text-3xl font-black flex items-center text-primary">
+            <div className="gradient-primary p-3 rounded-2xl mr-4 animate-glow-pulse">
+              <TrendingUp className="h-8 w-8 text-white animate-bounce-in" />
+            </div>
+            Your Glow Up Journey 📈
           </CardTitle>
-          <p className="text-muted-foreground font-medium">Traccia i tuoi progressi e celebra ogni miglioramento</p>
+          <p className="text-muted-foreground font-bold text-lg">Track your gains and flex your progress! 💪</p>
         </CardHeader>
         <CardContent className="p-6">
           {recentProgress.length > 0 ? (
@@ -317,9 +352,9 @@ export function Dashboard() {
               <div className="animate-bounce-in">
                 <TrendingUp className="h-16 w-16 text-primary mb-6" />
               </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">Il Tuo Viaggio Inizia Ora! 🚀</h3>
-              <p className="text-muted-foreground font-medium">
-                Inizia ad allenarti per vedere grafici spettacolari dei tuoi progressi!
+              <h3 className="text-2xl font-black mb-4 text-foreground">Your Story Starts NOW! 🚀</h3>
+              <p className="text-muted-foreground font-bold text-lg">
+                Start crushing workouts to see epic progress charts! 📊✨
               </p>
             </div>
           )}
@@ -330,13 +365,13 @@ export function Dashboard() {
       {personalBests.length > 0 && (
         <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift">
           <CardHeader className="pb-6">
-            <CardTitle className="text-2xl font-bold flex items-center">
-              <div className="gradient-primary p-2 rounded-xl mr-3 animate-glow-pulse">
-                <Trophy className="h-7 w-7 text-white" />
+            <CardTitle className="text-3xl font-black flex items-center">
+              <div className="gradient-primary p-3 rounded-2xl mr-4 animate-glow-pulse">
+                <Trophy className="h-8 w-8 text-white" />
               </div>
-              I Tuoi Record Leggendari
+              Personal Records Hall of Fame 🏆
             </CardTitle>
-            <p className="text-muted-foreground font-medium">Celebriamo ogni traguardo raggiunto! 🎉</p>
+            <p className="text-muted-foreground font-bold text-lg">Every PR is a flex! Let's celebrate your wins! 🎉💪</p>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -374,11 +409,13 @@ export function Dashboard() {
       {workouts.length > 0 && (
         <Card className="glass-strong border-0 shadow-glow-lg animate-slide-up hover-lift">
           <CardHeader className="pb-6">
-            <CardTitle className="text-2xl font-bold flex items-center text-primary">
-              <Calendar className="h-7 w-7 mr-3 animate-bounce-in" />
-              La Tua Storia di Successi
+            <CardTitle className="text-3xl font-black flex items-center text-primary">
+              <div className="gradient-secondary p-3 rounded-2xl mr-4 animate-glow-pulse">
+                <Calendar className="h-8 w-8 text-white animate-bounce-in" />
+              </div>
+              Your Success Story 📚
             </CardTitle>
-            <p className="text-muted-foreground font-medium">Ogni allenamento è un passo verso la grandezza</p>
+            <p className="text-muted-foreground font-bold text-lg">Every workout is a chapter in your fitness journey! 🌟</p>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4 max-h-96 overflow-y-auto pr-2">

@@ -93,47 +93,47 @@ export function FitnessApp() {
   const tabs = [
     {
       id: "dashboard",
-      label: "Centro di Controllo",
+      label: "Home 🏠",
       icon: LayoutDashboard,
     },
     {
       id: "workout-log",
-      label: "Diario Allenamenti", 
+      label: "My Workouts 💪", 
       icon: BookOpen,
     },
     {
       id: "exercises",
-      label: "Database Esercizi",
+      label: "Exercise Hub 🎯",
       icon: Database,
     },
     {
       id: "workout-plans",
-      label: "Le Tue Schede",
+      label: "My Plans 📋",
       icon: Target,
     },
     {
       id: "goals",
-      label: "I Tuoi Obiettivi",
+      label: "Goals 🎯",
       icon: Crosshair,
     },
     {
       id: "progress",
-      label: "Analisi Progressi",
+      label: "Progress 📈",
       icon: TrendingUp,
     },
     {
       id: "achievements",
-      label: "Hall of Fame",
+      label: "Achievements 🏆",
       icon: Trophy,
     },
     {
       id: "calories",
-      label: "Calc. Calorie",
+      label: "Calories 🔥",
       icon: Calculator,
     },
     {
       id: "timer",
-      label: "Timer Riposo",
+      label: "Timer ⏱️",
       icon: Timer,
     }
   ];
