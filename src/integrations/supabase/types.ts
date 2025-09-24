@@ -55,6 +55,69 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          date_of_birth: string | null
+          email_notifications: boolean | null
+          first_name: string | null
+          fitness_goals: string[] | null
+          fitness_level: string | null
+          height: number | null
+          id: string
+          last_name: string | null
+          notifications_enabled: boolean | null
+          preferred_units: string | null
+          privacy_profile: string | null
+          push_notifications: boolean | null
+          updated_at: string
+          username: string | null
+          weight: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email_notifications?: boolean | null
+          first_name?: string | null
+          fitness_goals?: string[] | null
+          fitness_level?: string | null
+          height?: number | null
+          id: string
+          last_name?: string | null
+          notifications_enabled?: boolean | null
+          preferred_units?: string | null
+          privacy_profile?: string | null
+          push_notifications?: boolean | null
+          updated_at?: string
+          username?: string | null
+          weight?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email_notifications?: boolean | null
+          first_name?: string | null
+          fitness_goals?: string[] | null
+          fitness_level?: string | null
+          height?: number | null
+          id?: string
+          last_name?: string | null
+          notifications_enabled?: boolean | null
+          preferred_units?: string | null
+          privacy_profile?: string | null
+          push_notifications?: boolean | null
+          updated_at?: string
+          username?: string | null
+          weight?: number | null
+        }
+        Relationships: []
+      }
       sets: {
         Row: {
           calories: number | null

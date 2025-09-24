@@ -8,8 +8,17 @@ export const supabase = {
     signIn: () => Promise.resolve({ data: null, error: null }),
     signOut: () => Promise.resolve({ error: null }),
     getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    getUser: () => Promise.resolve({ data: { user: { id: '1', email: 'user@example.com' } }, error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-  }
+  },
+  from: (table: string) => ({
+    select: (columns?: string) => ({
+      eq: (column: string, value: any) => ({
+        single: () => Promise.resolve({ data: null, error: null })
+      })
+    }),
+    upsert: (data: any) => Promise.resolve({ error: null })
+  })
 };
 
 // Database schema will be properly configured
