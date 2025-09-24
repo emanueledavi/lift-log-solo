@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, Dumbbell, Menu } from "lucide-react";
+import { LogOut, Dumbbell, Menu, Settings, User, Bell, Scale, Shield, HelpCircle } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import {
   Drawer,
@@ -9,6 +9,14 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { LucideIcon } from "lucide-react";
 
@@ -60,15 +68,70 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
         <div className="flex items-center gap-2">
           <ThemeToggle />
           
-          {/* User status indicator */}
-          <div className="hidden sm:flex glass p-2 rounded-lg">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <div className="w-2 h-2 bg-success rounded-full pulse-success"></div>
-              <span className="text-success text-xs truncate max-w-24">
-                {user?.email}
-              </span>
-            </div>
-          </div>
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 h-9 hover:bg-primary/10 hover:text-primary transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full pulse-success"></div>
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline text-xs truncate max-w-20">
+                    {user?.email?.split('@')[0]}
+                  </span>
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-bold">
+                🏋️ Beast Settings
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <User className="h-4 w-4" />
+                Profilo Beast 💪
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <Settings className="h-4 w-4" />
+                Impostazioni ⚙️
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <Bell className="h-4 w-4" />
+                Notifiche 🔔
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <Scale className="h-4 w-4" />
+                Unità di Misura 📏
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <Shield className="h-4 w-4" />
+                Privacy 🛡️
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <HelpCircle className="h-4 w-4" />
+                Aiuto & Support 💬
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem 
+                className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                onClick={onSignOut}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout Beast! 👋
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {/* Hamburger Menu */}
           <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
@@ -90,7 +153,7 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
               </DrawerHeader>
               
               <div className="flex-1 px-6 pb-6">
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-4">
                   {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -114,19 +177,6 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
                       </Button>
                     );
                   })}
-                </div>
-                
-                {/* Sign out section */}
-                <div className="border-t pt-4">
-                  <Button
-                    variant="destructive"
-                    size="lg"
-                    onClick={onSignOut}
-                    className="w-full gap-3 py-4 font-bold text-lg hover:scale-105 transition-transform"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    Sign Out Beast! 👋
-                  </Button>
                 </div>
               </div>
             </DrawerContent>
