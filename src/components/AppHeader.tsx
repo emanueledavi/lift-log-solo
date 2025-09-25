@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, Dumbbell, Menu, Settings, User, Bell, Scale, Shield, HelpCircle } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { useNavigate } from "react-router-dom";
 import {
   Drawer,
   DrawerContent,
@@ -41,6 +42,7 @@ interface AppHeaderProps {
 
 export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: AppHeaderProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleTabClick = (tabId: string) => {
     onTabChange(tabId);
@@ -91,32 +93,32 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               
-              <DropdownMenuItem className="gap-2 cursor-pointer">
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => navigate('/settings/profile')}>
                 <User className="h-4 w-4" />
                 Profilo Beast 💪
               </DropdownMenuItem>
               
-              <DropdownMenuItem className="gap-2 cursor-pointer">
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => navigate('/settings/general')}>
                 <Settings className="h-4 w-4" />
                 Impostazioni ⚙️
               </DropdownMenuItem>
               
-              <DropdownMenuItem className="gap-2 cursor-pointer">
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => navigate('/settings/notifications')}>
                 <Bell className="h-4 w-4" />
                 Notifiche 🔔
               </DropdownMenuItem>
               
-              <DropdownMenuItem className="gap-2 cursor-pointer">
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => navigate('/settings/units')}>
                 <Scale className="h-4 w-4" />
                 Unità di Misura 📏
               </DropdownMenuItem>
               
-              <DropdownMenuItem className="gap-2 cursor-pointer">
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => navigate('/settings/privacy')}>
                 <Shield className="h-4 w-4" />
                 Privacy 🛡️
               </DropdownMenuItem>
               
-              <DropdownMenuItem className="gap-2 cursor-pointer">
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => navigate('/help')}>
                 <HelpCircle className="h-4 w-4" />
                 Aiuto & Support 💬
               </DropdownMenuItem>
