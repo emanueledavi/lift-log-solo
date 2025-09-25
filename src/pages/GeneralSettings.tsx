@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -11,8 +11,8 @@ import { toast } from "sonner";
 
 export default function GeneralSettings() {
   const navigate = useNavigate();
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [settings, setSettings] = useState({
-    darkMode: false,
     autoStartWorkout: true,
     workoutReminders: true,
     soundEffects: true,
@@ -21,6 +21,28 @@ export default function GeneralSettings() {
     dataSync: true,
     volume: [80]
   });
+
+  useEffect(() => {
+    // Load theme from localStorage and apply it immediately
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const systemTheme = prefersDark ? 'dark' : 'light';
+      setTheme(systemTheme);
+      document.documentElement.classList.toggle('dark', systemTheme === 'dark');
+    }
+  }, []);
+
+  const toggleTheme = (checked: boolean) => {
+    const newTheme = checked ? 'dark' : 'light';
+    setTheme(newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    localStorage.setItem('theme', newTheme);
+    toast.success(`Modalità ${newTheme === 'dark' ? 'Scura' : 'Chiara'} Beast attivata! ${newTheme === 'dark' ? '🌙' : '☀️'}`);
+  };
 
   const handleSave = () => {
     toast.success("Impostazioni Beast salvate! ⚙️");
@@ -70,8 +92,8 @@ export default function GeneralSettings() {
                 </p>
               </div>
               <Switch
-                checked={settings.darkMode}
-                onCheckedChange={(checked) => setSettings(prev => ({...prev, darkMode: checked}))}
+                checked={theme === 'dark'}
+                onCheckedChange={toggleTheme}
               />
             </div>
 
