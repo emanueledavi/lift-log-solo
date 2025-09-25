@@ -11,9 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
 export function Dashboard() {
-  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
-  const [personalBests] = useLocalStorage<PersonalBest[]>('fitness-personal-bests', []);
-  const [workoutPlans] = useLocalStorage<WorkoutPlan[]>('fitness-workout-plans', []);
+  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('workouts', []);
+  const [personalBests] = useLocalStorage<PersonalBest[]>('personalBests', []);
+  const [workoutPlans] = useLocalStorage<WorkoutPlan[]>('workoutPlans', []);
   const [activeGuidedWorkout, setActiveGuidedWorkout] = useState<WorkoutPlan | null>(null);
   const { toast } = useToast();
 

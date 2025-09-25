@@ -41,9 +41,9 @@ const PRIORITY_COLORS = {
 };
 
 export function Goals() {
-  const [goals, setGoals] = useLocalStorage<Goal[]>('fitness-goals', []);
-  const [workouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
-  const [personalBests] = useLocalStorage<PersonalBest[]>('fitness-personal-bests', []);
+  const [goals, setGoals] = useLocalStorage<Goal[]>('goals', []);
+  const [workouts] = useLocalStorage<Workout[]>('workouts', []);
+  const [personalBests] = useLocalStorage<PersonalBest[]>('personalBests', []);
   const [showDialog, setShowDialog] = useState(false);
   const [newGoal, setNewGoal] = useState({
     title: '',

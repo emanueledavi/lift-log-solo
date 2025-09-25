@@ -7,8 +7,8 @@ import { useState, useMemo } from "react";
 import { TrendingUp, Trophy, Target, Calendar } from "lucide-react";
 
 export function Progress() {
-  const [workouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
-  const [personalBests] = useLocalStorage<PersonalBest[]>('fitness-personal-bests', []);
+  const [workouts] = useLocalStorage<Workout[]>('workouts', []);
+  const [personalBests] = useLocalStorage<PersonalBest[]>('personalBests', []);
   
   const [selectedExercise, setSelectedExercise] = useState<string>('');
 

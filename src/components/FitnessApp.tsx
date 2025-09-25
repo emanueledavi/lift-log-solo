@@ -116,6 +116,11 @@ export function FitnessApp() {
       icon: Crosshair,
     },
     {
+      id: "gamification",
+      label: "Beast Mode 🚀",
+      icon: Trophy,
+    },
+    {
       id: "progress",
       label: "Progress 📈",
       icon: TrendingUp,

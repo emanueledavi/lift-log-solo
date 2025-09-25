@@ -17,7 +17,7 @@ interface GuidedWorkoutProps {
 }
 
 export function GuidedWorkout({ workoutPlan, onComplete, onClose }: GuidedWorkoutProps) {
-  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
+  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('workouts', []);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
   const [completedExercises, setCompletedExercises] = useState<Exercise[]>([]);

@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 export function WorkoutDetails() {
   const { workoutId } = useParams();
   const navigate = useNavigate();
-  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
+  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('workouts', []);
   const [editingSet, setEditingSet] = useState<Set | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddExerciseOpen, setIsAddExerciseOpen] = useState(false);

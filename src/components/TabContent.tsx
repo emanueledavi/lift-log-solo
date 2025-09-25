@@ -14,6 +14,7 @@ const RestTimer = lazy(() => import("./RestTimer").then(m => ({ default: m.RestT
 const ExerciseDatabase = lazy(() => import("./ExerciseDatabase").then(m => ({ default: m.ExerciseDatabase })));
 const Achievements = lazy(() => import("./Achievements").then(m => ({ default: m.Achievements })));
 const Goals = lazy(() => import("./Goals").then(m => ({ default: m.Goals })));
+const Gamification = lazy(() => import("./Gamification").then(m => ({ default: m.Gamification })));
 
 interface TabContentProps {
   activeTab: string;
@@ -26,6 +27,7 @@ const componentMap: Record<string, ComponentType> = {
   "exercises": ExerciseDatabase,
   "workout-plans": WorkoutPlansComponent,
   "goals": Goals,
+  "gamification": Gamification,
   "progress": Progress,
   "achievements": Achievements,
   "calories": CalorieCalculator,

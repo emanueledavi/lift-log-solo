@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useWorkoutGamification } from "@/hooks/useWorkoutGamification";
 import { Workout, Exercise, Set, PersonalBest } from "@/types/fitness";
 import { Plus, Trash2, Save, Calendar, Timer } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -11,8 +12,9 @@ import { ExerciseTypeSelectionDialog } from "./ExerciseTypeSelectionDialog";
 import { ExerciseSelector } from "./ExerciseSelector";
 
 export function WorkoutLog() {
-  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('fitness-workouts', []);
-  const [personalBests, setPersonalBests] = useLocalStorage<PersonalBest[]>('fitness-personal-bests', []);
+  const [workouts, setWorkouts] = useLocalStorage<Workout[]>('workouts', []);
+  const [personalBests, setPersonalBests] = useLocalStorage<PersonalBest[]>('personalBests', []);
+  const { awardXP } = useWorkoutGamification();
   
   const [currentWorkout, setCurrentWorkout] = useState<Workout>({
     id: Date.now().toString(),
@@ -170,6 +172,9 @@ export function WorkoutLog() {
             newPB
           ]);
 
+          // Award XP for personal best
+          awardXP('personal_best');
+
           toast({
             title: "🏆 Nuovo Personal Best!",
             description: `${exercise.name}: ${maxSet.weight}kg x ${maxSet.reps}`,
@@ -186,6 +191,11 @@ export function WorkoutLog() {
       notes: ''
     });
     setStartTime(null);
+
+    // Check for exercise milestone (10+ exercises)
+    if (currentWorkout.exercises.length >= 10) {
+      awardXP('exercise_milestone');
+    }
 
     toast({
       title: "Allenamento salvato!",
