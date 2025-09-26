@@ -7,11 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { signUpSchema, signInSchema } from "@/lib/auth";
+import { z } from 'zod';
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -20,27 +25,70 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // Temporary mock authentication - will be replaced with Supabase
-      if (email && password.length >= 6) {
-        localStorage.setItem('fitapp_user', JSON.stringify({ email, loggedIn: true }));
+      // Validate input
+      const validatedData = signUpSchema.parse({
+        email,
+        password,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined
+      });
+
+      // Sign up with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: validatedData.email,
+        password: validatedData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            first_name: validatedData.firstName,
+            last_name: validatedData.lastName
+          }
+        }
+      });
+
+      if (error) {
+        if (error.message.includes('already registered')) {
+          toast({
+            title: "Account già esistente",
+            description: "Un account con questa email esiste già. Prova ad accedere.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Errore di registrazione",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
+        return;
+      }
+
+      if (data.user && !data.session) {
+        toast({
+          title: "Verifica la tua email",
+          description: "Ti abbiamo inviato un link di conferma. Controlla la tua email per completare la registrazione.",
+        });
+      } else if (data.session) {
         toast({
           title: "Registrazione completata!",
           description: "Benvenuto in FitApp!",
         });
         navigate("/");
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Dati non validi",
+          description: error.issues[0].message,
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Errore",
-          description: "La password deve essere di almeno 6 caratteri.",
+          description: "Si è verificato un errore imprevisto.",
           variant: "destructive",
         });
       }
-    } catch (error) {
-      toast({
-        title: "Errore",
-        description: "Si è verificato un errore imprevisto.",
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }
@@ -51,27 +99,53 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // Temporary mock authentication - will be replaced with Supabase
-      if (email && password) {
-        localStorage.setItem('fitapp_user', JSON.stringify({ email, loggedIn: true }));
+      // Validate input
+      const validatedData = signInSchema.parse({ email, password });
+
+      // Sign in with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: validatedData.email,
+        password: validatedData.password,
+      });
+
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Credenziali non valide",
+            description: "Email o password errati. Riprova.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Errore di accesso",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
+        return;
+      }
+
+      if (data.session) {
         toast({
           title: "Accesso effettuato!",
           description: "Benvenuto di nuovo!",
         });
         navigate("/");
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Dati non validi",
+          description: error.issues[0].message,
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Errore",
-          description: "Inserisci email e password.",
+          description: "Si è verificato un errore imprevisto.",
           variant: "destructive",
         });
       }
-    } catch (error) {
-      toast({
-        title: "Errore",
-        description: "Si è verificato un errore imprevisto.",
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }
@@ -145,6 +219,26 @@ export default function Auth() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-firstName">Nome</Label>
+                    <Input
+                      id="register-firstName"
+                      type="text"
+                      placeholder="Il tuo nome"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="register-lastName">Cognome</Label>
+                    <Input
+                      id="register-lastName"
+                      type="text"
+                      placeholder="Il tuo cognome"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-email">Email</Label>
                     <Input

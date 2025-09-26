@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,10 +12,16 @@ import { CalendarIcon, User, Save, ArrowLeft, Camera } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { profileSchema, ProfileData } from "@/lib/validation";
+import { z } from 'zod';
 
 export default function ProfileSettings() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
@@ -26,9 +32,113 @@ export default function ProfileSettings() {
     fitnessLevel: 'beginner'
   });
 
-  const handleSave = () => {
-    toast.success("Profilo Beast aggiornato! 💪");
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [loading, user, navigate]);
+
+  // Load user profile data
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user) return;
+
+      try {
+        const { data: profileData, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error loading profile:', error);
+          return;
+        }
+
+        if (profileData) {
+          setProfile({
+            firstName: profileData.first_name || '',
+            lastName: profileData.last_name || '',
+            username: profileData.username || '',
+            bio: profileData.bio || '',
+            height: profileData.height?.toString() || '',
+            weight: profileData.weight?.toString() || '',
+            fitnessLevel: profileData.fitness_level || 'beginner'
+          });
+
+          if (profileData.date_of_birth) {
+            setSelectedDate(new Date(profileData.date_of_birth));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        toast.error('Errore nel caricamento del profilo');
+      }
+    };
+
+    loadProfile();
+  }, [user]);
+
+  const handleSave = async () => {
+    if (!user) return;
+
+    setIsLoading(true);
+    
+    try {
+      // Validate the form data
+      const validatedData = profileSchema.parse({
+        firstName: profile.firstName || undefined,
+        lastName: profile.lastName || undefined,
+        username: profile.username || undefined,
+        bio: profile.bio || undefined,
+        height: profile.height ? parseFloat(profile.height) : undefined,
+        weight: profile.weight ? parseFloat(profile.weight) : undefined,
+        fitnessLevel: profile.fitnessLevel as 'beginner' | 'intermediate' | 'advanced',
+        dateOfBirth: selectedDate
+      });
+
+      // Save to Supabase
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          first_name: validatedData.firstName,
+          last_name: validatedData.lastName,
+          username: validatedData.username,
+          bio: validatedData.bio,
+          height: validatedData.height,
+          weight: validatedData.weight,
+          fitness_level: validatedData.fitnessLevel,
+          date_of_birth: validatedData.dateOfBirth?.toISOString().split('T')[0]
+        });
+
+      if (error) {
+        console.error('Error saving profile:', error);
+        toast.error('Errore nel salvataggio del profilo');
+        return;
+      }
+
+      toast.success("Profilo Beast aggiornato! 💪");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.issues[0].message);
+      } else {
+        console.error('Error saving profile:', error);
+        toast.error('Errore nel salvataggio del profilo');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Caricamento...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 p-4">
@@ -210,9 +320,10 @@ export default function ProfileSettings() {
           onClick={handleSave}
           size="lg"
           className="w-full gap-2"
+          disabled={isLoading}
         >
           <Save className="h-5 w-5" />
-          Salva Beast Profile 💪
+          {isLoading ? "Salvando..." : "Salva Beast Profile 💪"}
         </Button>
       </div>
     </div>

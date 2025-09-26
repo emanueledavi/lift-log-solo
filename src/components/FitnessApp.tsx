@@ -5,6 +5,7 @@ import { TabContent } from "./TabContent";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -17,53 +18,23 @@ import {
   Crosshair
 } from "lucide-react";
 
-interface User {
-  email: string;
-  loggedIn: boolean;
-}
-
 export function FitnessApp() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
+  const { user, loading, signOut, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Authentication check with improved error handling
-  const checkAuth = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const stored = localStorage.getItem('fitapp_user');
-      if (stored) {
-        const userData = JSON.parse(stored);
-        if (userData.loggedIn && userData.email) {
-          setUser(userData);
-        } else {
-          throw new Error('Dati utente non validi');
-        }
-      } else {
-        navigate("/auth");
-        return;
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      setError('Errore nel caricamento dei dati utente');
-      localStorage.removeItem('fitapp_user');
+  // Check authentication status
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
       navigate("/auth");
-    } finally {
-      setLoading(false);
     }
-  }, [navigate]);
+  }, [loading, isAuthenticated, navigate]);
 
   // Improved sign out with confirmation
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = useCallback(async () => {
     try {
-      localStorage.removeItem('fitapp_user');
-      setUser(null);
+      await signOut();
       toast({
         title: "Disconnesso",
         description: "Sei stato disconnesso con successo.",
@@ -77,16 +48,12 @@ export function FitnessApp() {
         variant: "destructive",
       });
     }
-  }, [navigate, toast]);
+  }, [signOut, navigate, toast]);
 
   // Tab change with smooth transition
   const handleTabChange = useCallback((tabId: string) => {
     setActiveTab(tabId);
   }, []);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
 
   // Navigation tabs configuration
   const tabs = [
@@ -151,25 +118,8 @@ export function FitnessApp() {
     );
   }
 
-  // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <div className="text-center space-y-4">
-          <div className="text-destructive text-lg font-semibold">{error}</div>
-          <button 
-            onClick={checkAuth}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
-            Riprova
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // User not authenticated
-  if (!user) {
+  if (!isAuthenticated) {
     return null; // Will redirect to auth
   }
 

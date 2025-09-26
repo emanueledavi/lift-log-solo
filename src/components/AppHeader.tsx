@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Dumbbell, Menu, Settings, User, Bell, Scale, Shield, HelpCircle } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useNavigate } from "react-router-dom";
+import { User as SupabaseUser } from '@supabase/supabase-js';
 import {
   Drawer,
   DrawerContent,
@@ -21,11 +22,6 @@ import {
 
 import { LucideIcon } from "lucide-react";
 
-interface User {
-  email: string;
-  loggedIn: boolean;
-}
-
 interface NavigationTab {
   id: string;
   label: string;
@@ -33,7 +29,7 @@ interface NavigationTab {
 }
 
 interface AppHeaderProps {
-  user: User;
+  user: SupabaseUser;
   onSignOut: () => void;
   tabs: NavigationTab[];
   activeTab: string;
@@ -82,7 +78,7 @@ export function AppHeader({ user, onSignOut, tabs, activeTab, onTabChange }: App
                   <div className="w-2 h-2 bg-success rounded-full pulse-success"></div>
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline text-xs truncate max-w-20">
-                    {user?.email?.split('@')[0]}
+                    {user?.email?.split('@')[0] || 'User'}
                   </span>
                 </div>
               </Button>
