@@ -12,6 +12,7 @@ export interface Badge {
   };
   unlockedAt?: string;
   unlocked: boolean;
+  notificationShown?: boolean;
 }
 
 export interface Level {

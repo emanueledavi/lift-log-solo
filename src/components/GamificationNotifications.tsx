@@ -1,28 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGamification } from '@/hooks/useGamification';
 import { toast } from '@/hooks/use-toast';
 
 // Component to handle gamification notifications
 export function GamificationNotifications() {
   const { stats } = useGamification();
+  const lastNotifiedStreak = useRef<number>(0);
   
-  // Display streak notifications
+  // Display streak notifications only when streak actually increases
   useEffect(() => {
-    if (stats.currentStreak > 0 && stats.currentStreak % 3 === 0) {
-      const streakMessage = stats.currentStreak === 3 
+    const currentStreak = stats.currentStreak;
+    
+    // Only show notification if streak is higher than last notified and is a milestone
+    if (currentStreak > lastNotifiedStreak.current && 
+        currentStreak > 0 && 
+        (currentStreak === 3 || currentStreak === 7 || currentStreak === 30 || currentStreak % 10 === 0)) {
+      
+      const streakMessage = currentStreak === 3 
         ? "🔥 3 giorni di fila! Sei in fire!" 
-        : stats.currentStreak === 7 
+        : currentStreak === 7 
         ? "⚡ Una settimana intera! Beast mode!" 
-        : stats.currentStreak === 30
+        : currentStreak === 30
         ? "👑 30 giorni! Sei una leggenda!"
-        : `🚀 ${stats.currentStreak} giorni consecutivi! Incredibile!`;
+        : `🚀 ${currentStreak} giorni consecutivi! Incredibile!`;
         
-      if (stats.currentStreak >= 3) {
-        toast({
-          title: "🔥 STREAK BEAST!",
-          description: streakMessage,
-        });
-      }
+      toast({
+        title: "🔥 STREAK BEAST!",
+        description: streakMessage,
+      });
+      
+      lastNotifiedStreak.current = currentStreak;
     }
   }, [stats.currentStreak]);
 

@@ -235,22 +235,32 @@ export function useGamification() {
         const wasLocked = !badge.unlocked;
         const newUnlocked = shouldUnlock || badge.unlocked;
         
-        // Show toast for newly unlocked badges
-        if (wasLocked && newUnlocked && shouldUnlock) {
+        // Show toast ONLY for newly unlocked badges that haven't been notified before
+        if (wasLocked && newUnlocked && shouldUnlock && !badge.notificationShown) {
+          // Use a shorter timeout and mark as notified
           setTimeout(() => {
             toast({
               title: `🏆 BADGE SBLOCCATO!`,
               description: `${badge.icon} ${badge.name} - ${badge.description}`,
             });
             awardXP('challenge_completed', 25);
-          }, 500);
+          }, 200);
+          
+          return {
+            ...badge,
+            requirement: { ...badge.requirement, current },
+            unlocked: newUnlocked,
+            unlockedAt: new Date().toISOString(),
+            notificationShown: true
+          };
         }
         
         return {
           ...badge,
           requirement: { ...badge.requirement, current },
           unlocked: newUnlocked,
-          unlockedAt: newUnlocked && !badge.unlockedAt ? new Date().toISOString() : badge.unlockedAt
+          unlockedAt: newUnlocked && !badge.unlockedAt ? new Date().toISOString() : badge.unlockedAt,
+          notificationShown: badge.notificationShown || false
         };
       });
       
