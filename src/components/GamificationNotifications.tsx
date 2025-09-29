@@ -7,13 +7,15 @@ export function GamificationNotifications() {
   const { stats, awardXP } = useGamification();
   const lastNotifiedStreak = useRef<number>(0);
   const notificationCooldown = useRef<boolean>(false);
+  const processedNotifications = useRef<Set<string>>(new Set());
   
   // Display streak notifications only when streak actually increases
   useEffect(() => {
     const currentStreak = stats.currentStreak;
+    const notificationId = `streak_${currentStreak}`;
     
-    // Prevent notification spam with cooldown
-    if (notificationCooldown.current) return;
+    // Prevent notification spam with multiple layers of protection
+    if (notificationCooldown.current || processedNotifications.current.has(notificationId)) return;
     
     // Only show notification if streak is higher than last notified and is a milestone
     if (currentStreak > lastNotifiedStreak.current && currentStreak > 0) {
@@ -23,8 +25,9 @@ export function GamificationNotifications() {
         currentStreak === 100 || currentStreak % 25 === 0;
       
       if (isStreakMilestone) {
-        // Activate cooldown to prevent duplicate notifications
+        // Triple protection against duplicates
         notificationCooldown.current = true;
+        processedNotifications.current.add(notificationId);
         
         const streakMessages: Record<number, string> = {
           3: "🔥 3 giorni di FUOCO! Bestia in crescita!",
@@ -55,10 +58,10 @@ export function GamificationNotifications() {
         
         lastNotifiedStreak.current = currentStreak;
         
-        // Reset cooldown after 3 seconds
+        // Reset cooldown after 5 seconds (longer delay)
         setTimeout(() => {
           notificationCooldown.current = false;
-        }, 3000);
+        }, 5000);
       }
     }
   }, [stats.currentStreak, awardXP]);

@@ -297,9 +297,9 @@ export function useGamification() {
         const wasLocked = !badge.unlocked;
         const newUnlocked = shouldUnlock || badge.unlocked;
         
-        // Show toast ONLY for newly unlocked badges that haven't been notified before
+        // STRICT deduplication: Show notification ONLY for newly unlocked badges
         if (wasLocked && newUnlocked && shouldUnlock && !badge.notificationShown) {
-          // Set immediate state update to prevent duplicate notifications
+          // Immediately mark as notified to prevent any duplicates
           const updatedBadge = {
             ...badge,
             requirement: { ...badge.requirement, current },
@@ -308,14 +308,13 @@ export function useGamification() {
             notificationShown: true
           };
           
-          // Show notification after state update
+          // Show notification with delay to ensure state is updated first
           setTimeout(() => {
             toast({
               title: `🏆 BADGE LEGGENDARIO SBLOCCATO!`,
               description: `${badge.icon} ${badge.name} - ${badge.description}`,
             });
-            // Award XP without causing re-render loops
-          }, 100);
+          }, 150);
           
           return updatedBadge;
         }
@@ -337,7 +336,7 @@ export function useGamification() {
         totalWorkouts
       };
     });
-  }, [workouts, calculateStreak, initializeBadges, setGamificationStats, toast, awardXP]);
+  }, [workouts, calculateStreak, initializeBadges, setGamificationStats, toast]);
 
   // Initialize challenges if none exist
   const initializeChallenges = useCallback(() => {
