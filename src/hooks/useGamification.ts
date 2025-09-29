@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Badge, Level, Challenge, GamificationStats, XpSource } from '@/types/gamification';
 import { Workout } from '@/types/fitness';
-import { useToast } from './use-toast';
+import { useNotificationManager } from './useNotificationManager';
 
 const LEVELS: Level[] = [
   { level: 1, name: '🔥 Fire Starter', minXp: 0, maxXp: 300, rewards: ['Basic tracking', '+50 XP boost'], color: 'from-orange-400 to-red-500' },
@@ -50,7 +50,7 @@ export function useGamification() {
     progressPhotos: []
   });
 
-  const { toast } = useToast();
+  const { showNotification } = useNotificationManager();
 
   // Calculate current level based on XP
   const getCurrentLevel = useCallback((xp: number): Level => {
@@ -259,17 +259,19 @@ export function useGamification() {
     
     // Check for level up
     if (newLevel.level > currentLevel.level) {
-      toast({
-        title: "🎉 LEVEL UP!",
-        description: `Congratulazioni! Ora sei ${newLevel.name} (Livello ${newLevel.level})!`,
-      });
+      showNotification(
+        `level_up_${newLevel.level}`,
+        "🎉 LEVEL UP!",
+        `Congratulazioni! Ora sei ${newLevel.name} (Livello ${newLevel.level})!`
+      );
     } else {
-      toast({
-        title: `+${xpAmount} XP`,
-        description: xpSource.description,
-      });
+      showNotification(
+        `xp_${source}_${Date.now()}`,
+        `+${xpAmount} XP`,
+        xpSource.description
+      );
     }
-  }, [gamificationStats.totalXp, gamificationStats.currentXp, getCurrentLevel, setGamificationStats, toast]);
+  }, [gamificationStats.totalXp, gamificationStats.currentXp, getCurrentLevel, setGamificationStats, showNotification]);
 
   // Update badges based on current progress
   const updateBadges = useCallback(() => {
@@ -310,11 +312,12 @@ export function useGamification() {
           
           // Show notification with delay to ensure state is updated first
           setTimeout(() => {
-            toast({
-              title: `🏆 BADGE LEGGENDARIO SBLOCCATO!`,
-              description: `${badge.icon} ${badge.name} - ${badge.description}`,
-            });
-          }, 150);
+            showNotification(
+              `badge_${badge.id}`,
+              `🏆 BADGE LEGGENDARIO SBLOCCATO!`,
+              `${badge.icon} ${badge.name} - ${badge.description}`
+            );
+          }, 200);
           
           return updatedBadge;
         }
@@ -336,7 +339,7 @@ export function useGamification() {
         totalWorkouts
       };
     });
-  }, [workouts, calculateStreak, initializeBadges, setGamificationStats, toast]);
+  }, [workouts, calculateStreak, initializeBadges, setGamificationStats, showNotification]);
 
   // Initialize challenges if none exist
   const initializeChallenges = useCallback(() => {
