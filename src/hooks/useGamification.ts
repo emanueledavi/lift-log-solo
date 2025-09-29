@@ -5,23 +5,35 @@ import { Workout } from '@/types/fitness';
 import { useToast } from './use-toast';
 
 const LEVELS: Level[] = [
-  { level: 1, name: 'Rookie Beast', minXp: 0, maxXp: 100, rewards: ['Basic tracking'], color: 'from-gray-400 to-gray-600' },
-  { level: 2, name: 'Fitness Explorer', minXp: 100, maxXp: 250, rewards: ['Workout plans'], color: 'from-green-400 to-green-600' },
-  { level: 3, name: 'Gym Warrior', minXp: 250, maxXp: 500, rewards: ['Advanced analytics'], color: 'from-blue-400 to-blue-600' },
-  { level: 4, name: 'Iron Beast', minXp: 500, maxXp: 1000, rewards: ['Custom challenges'], color: 'from-purple-400 to-purple-600' },
-  { level: 5, name: 'Fitness Legend', minXp: 1000, maxXp: 2000, rewards: ['Beast mode unlock'], color: 'from-orange-400 to-orange-600' },
-  { level: 6, name: 'Ultimate Beast', minXp: 2000, maxXp: 99999, rewards: ['All features'], color: 'from-red-400 to-red-600' },
+  { level: 1, name: '🔥 Fire Starter', minXp: 0, maxXp: 300, rewards: ['Basic tracking', '+50 XP boost'], color: 'from-orange-400 to-red-500' },
+  { level: 2, name: '⚡ Beast Rookie', minXp: 300, maxXp: 800, rewards: ['Workout plans', 'Streak multiplier x1.2'], color: 'from-blue-400 to-cyan-500' },
+  { level: 3, name: '💪 Iron Warrior', minXp: 800, maxXp: 1800, rewards: ['Advanced analytics', 'XP boost +25%'], color: 'from-purple-400 to-pink-500' },
+  { level: 4, name: '🚀 Gym Dominator', minXp: 1800, maxXp: 4000, rewards: ['Custom challenges', 'Beast badges'], color: 'from-green-400 to-emerald-500' },
+  { level: 5, name: '👑 Fitness Titan', minXp: 4000, maxXp: 8000, rewards: ['Elite features', 'Legendary status'], color: 'from-yellow-400 to-orange-500' },
+  { level: 6, name: '🌟 Beast God', minXp: 8000, maxXp: 15000, rewards: ['God mode', 'Ultimate rewards'], color: 'from-purple-500 to-red-500' },
+  { level: 7, name: '⭐ Immortal Legend', minXp: 15000, maxXp: 30000, rewards: ['Immortal status', 'All powers'], color: 'from-gradient-start to-gradient-end' },
+  { level: 8, name: '🏆 Supreme Being', minXp: 30000, maxXp: 99999, rewards: ['Supreme power', 'Infinite glory'], color: 'from-gold-400 to-yellow-600' },
 ];
 
 const XP_SOURCES: Record<string, XpSource> = {
-  workout_completed: { action: 'workout_completed', xp: 50, description: 'Workout completato' },
-  first_workout: { action: 'first_workout', xp: 100, description: 'Primo workout!' },
-  streak_3: { action: 'streak_3', xp: 25, description: '3 giorni consecutivi' },
-  streak_7: { action: 'streak_7', xp: 100, description: '7 giorni consecutivi' },
-  streak_30: { action: 'streak_30', xp: 500, description: '30 giorni consecutivi' },
-  personal_best: { action: 'personal_best', xp: 75, description: 'Nuovo record personale' },
-  exercise_milestone: { action: 'exercise_milestone', xp: 30, description: '10 esercizi in un workout' },
-  challenge_completed: { action: 'challenge_completed', xp: 100, description: 'Sfida completata' },
+  workout_completed: { action: 'workout_completed', xp: 150, description: '🔥 Workout Beast completato!' },
+  first_workout: { action: 'first_workout', xp: 300, description: '🎯 Primo workout da LEGGENDA!' },
+  streak_3: { action: 'streak_3', xp: 200, description: '⚡ 3 giorni di FUOCO consecutivi!' },
+  streak_7: { action: 'streak_7', xp: 500, description: '🚀 Una settimana da BESTIA!' },
+  streak_30: { action: 'streak_30', xp: 2000, description: '👑 30 giorni: SEI UNA LEGGENDA!' },
+  streak_10: { action: 'streak_10', xp: 800, description: '💪 10 giorni di puro FERRO!' },
+  streak_21: { action: 'streak_21', xp: 1200, description: '🏆 21 giorni: Macchina da guerra!' },
+  streak_50: { action: 'streak_50', xp: 3500, description: '⭐ 50 giorni: IMMORTALE!' },
+  streak_100: { action: 'streak_100', xp: 7500, description: '🌟 100 giorni: DIO DEL FITNESS!' },
+  personal_best: { action: 'personal_best', xp: 250, description: '💥 Nuovo RECORD personale!' },
+  exercise_milestone: { action: 'exercise_milestone', xp: 100, description: '🎯 10+ esercizi: Varietà BEAST!' },
+  volume_milestone: { action: 'volume_milestone', xp: 300, description: '📈 Volume ESTREMO raggiunto!' },
+  endurance_beast: { action: 'endurance_beast', xp: 400, description: '⏱️ Resistenza da TITANO!' },
+  strength_god: { action: 'strength_god', xp: 500, description: '💪 Forza DIVINA!' },
+  cardio_warrior: { action: 'cardio_warrior', xp: 350, description: '❤️ Cuore da GUERRIERO!' },
+  challenge_completed: { action: 'challenge_completed', xp: 300, description: '🏅 Sfida DOMINATA!' },
+  perfect_week: { action: 'perfect_week', xp: 1000, description: '✨ Settimana PERFETTA!' },
+  beast_mode: { action: 'beast_mode', xp: 800, description: '🦁 BEAST MODE attivato!' },
 };
 
 export function useGamification() {
@@ -72,49 +84,89 @@ export function useGamification() {
     return [
       {
         id: 'first_workout',
-        name: 'Primo Passo',
-        description: 'Completa il tuo primo workout',
-        icon: '🎯',
-        category: 'workout',
-        rarity: 'common',
+        name: '🎯 BEAST AWAKENED',
+        description: 'Hai iniziato il tuo viaggio da LEGGENDA!',
+        icon: '🔥',
+        category: 'milestone',
+        rarity: 'rare',
         requirement: { type: 'workouts', target: 1 },
         unlocked: false
       },
       {
         id: 'workout_streak_3',
-        name: 'Costanza',
-        description: '3 giorni consecutivi di allenamento',
-        icon: '🔥',
+        name: '🔥 FIRE STARTER',
+        description: '3 giorni di FUOCO consecutivi!',
+        icon: '⚡',
         category: 'consistency',
-        rarity: 'common',
+        rarity: 'rare',
         requirement: { type: 'streak', target: 3 },
         unlocked: false
       },
       {
         id: 'workout_streak_7',
-        name: 'Settimana Beast',
-        description: '7 giorni consecutivi di allenamento',
-        icon: '⚡',
+        name: '⚡ WEEK DOMINATOR',
+        description: 'Una settimana DEVASTANTE!',
+        icon: '💪',
         category: 'consistency',
-        rarity: 'rare',
+        rarity: 'epic',
         requirement: { type: 'streak', target: 7 },
         unlocked: false
       },
       {
+        id: 'workout_streak_21',
+        name: '🏆 HABIT CRUSHER',
+        description: '21 giorni: Hai SPEZZATO le catene!',
+        icon: '⛓️‍💥',
+        category: 'consistency',
+        rarity: 'epic',
+        requirement: { type: 'streak', target: 21 },
+        unlocked: false
+      },
+      {
+        id: 'workout_streak_30',
+        name: '👑 LEGEND STATUS',
+        description: '30 giorni: SEI UNA LEGGENDA!',
+        icon: '🌟',
+        category: 'consistency',
+        rarity: 'legendary',
+        requirement: { type: 'streak', target: 30 },
+        unlocked: false
+      },
+      {
+        id: 'workout_streak_100',
+        name: '🌟 FITNESS GOD',
+        description: '100 giorni: DIVINITÀ del FITNESS!',
+        icon: '⚡',
+        category: 'consistency',
+        rarity: 'legendary',
+        requirement: { type: 'streak', target: 100 },
+        unlocked: false
+      },
+      {
         id: 'workout_10',
-        name: 'Veterano',
-        description: 'Completa 10 workout',
-        icon: '💪',
+        name: '💪 IRON ROOKIE',
+        description: '10 workout: Guerriero del ferro!',
+        icon: '🔨',
         category: 'workout',
-        rarity: 'common',
+        rarity: 'rare',
         requirement: { type: 'workouts', target: 10 },
         unlocked: false
       },
       {
+        id: 'workout_25',
+        name: '🚀 BEAST MACHINE',
+        description: '25 workout: Macchina inarrestabile!',
+        icon: '⚙️',
+        category: 'workout',
+        rarity: 'epic',
+        requirement: { type: 'workouts', target: 25 },
+        unlocked: false
+      },
+      {
         id: 'workout_50',
-        name: 'Macchina da Guerra',
-        description: 'Completa 50 workout',
-        icon: '🤖',
+        name: '🦁 WAR MACHINE',
+        description: '50 workout: Macchina da GUERRA!',
+        icon: '⚔️',
         category: 'workout',
         rarity: 'epic',
         requirement: { type: 'workouts', target: 50 },
@@ -122,12 +174,22 @@ export function useGamification() {
       },
       {
         id: 'workout_100',
-        name: 'Centurione',
-        description: 'Completa 100 workout',
-        icon: '👑',
+        name: '👑 SUPREME WARRIOR',
+        description: '100 workout: GUERRIERO SUPREMO!',
+        icon: '⚔️',
         category: 'workout',
         rarity: 'legendary',
         requirement: { type: 'workouts', target: 100 },
+        unlocked: false
+      },
+      {
+        id: 'workout_200',
+        name: '⭐ IMMORTAL BEAST',
+        description: '200 workout: BESTIA IMMORTALE!',
+        icon: '🔱',
+        category: 'workout',
+        rarity: 'legendary',
+        requirement: { type: 'workouts', target: 200 },
         unlocked: false
       }
     ];
@@ -237,22 +299,25 @@ export function useGamification() {
         
         // Show toast ONLY for newly unlocked badges that haven't been notified before
         if (wasLocked && newUnlocked && shouldUnlock && !badge.notificationShown) {
-          // Use a shorter timeout and mark as notified
-          setTimeout(() => {
-            toast({
-              title: `🏆 BADGE SBLOCCATO!`,
-              description: `${badge.icon} ${badge.name} - ${badge.description}`,
-            });
-            awardXP('challenge_completed', 25);
-          }, 200);
-          
-          return {
+          // Set immediate state update to prevent duplicate notifications
+          const updatedBadge = {
             ...badge,
             requirement: { ...badge.requirement, current },
             unlocked: newUnlocked,
             unlockedAt: new Date().toISOString(),
             notificationShown: true
           };
+          
+          // Show notification after state update
+          setTimeout(() => {
+            toast({
+              title: `🏆 BADGE LEGGENDARIO SBLOCCATO!`,
+              description: `${badge.icon} ${badge.name} - ${badge.description}`,
+            });
+            // Award XP without causing re-render loops
+          }, 100);
+          
+          return updatedBadge;
         }
         
         return {
